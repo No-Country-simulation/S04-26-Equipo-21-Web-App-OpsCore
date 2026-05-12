@@ -6,24 +6,25 @@ import lombok.*;
 
 @Entity
 @Table(name = "respuestas_puntos_control")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RespuestaPuntoControl {
+public class RespuestaPuntoControl extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "checklist_id")
-    @JsonIgnore // Evita que el sistema entre en un bucle infinito al generar el JSON
-    private ChecklistEjecucion checklist;
+    @JoinColumn(name = "item_id")
+    private ChecklistItem item; // A qué punto de la plantilla responde
 
-    private String descripcionPunto; // Ej: "Nivel de aceite", "Pines eléctricos"
-    private Boolean esCritico;       // Si esto es falso y es crítico, generamos Incidente
-    private Boolean estadoOk;        // True = OK, False = Falla
+    private boolean completado;
+    private String observaciones;
 
-    @Column(columnDefinition = "TEXT")
-    private String observaciones;    // Detalles adicionales de la falla
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ejecucion_id")
+    private ChecklistEjecucion ejecucion;
+
 }

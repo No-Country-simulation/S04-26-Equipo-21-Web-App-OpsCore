@@ -8,6 +8,8 @@ import java.util.List;
 @Entity
 @Table(name = "checklists_ejecucion")
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -15,6 +17,11 @@ public class ChecklistEjecucion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "checklist_plantilla_id")
+    private Checklist plantilla; // De qué checklist viene
 
     // Relacionamos con la máquina específica
     @ManyToOne(fetch = FetchType.LAZY)
