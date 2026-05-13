@@ -4,7 +4,6 @@ package com.opscore.incident.controller;
 import com.opscore.incident.model.Incidente;
 import com.opscore.incident.enums.EstadoIncidente;
 import com.opscore.incident.enums.Prioridad;
-import com.opscore.incident.service.IncidenteService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
