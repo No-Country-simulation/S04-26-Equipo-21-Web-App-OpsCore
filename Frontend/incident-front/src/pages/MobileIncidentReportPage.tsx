@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import {
   IncidentReportForm,
   type IncidentReportData,
 } from "@/components/organisms/incidents/IncidentReportForm";
+import {
+  IncidentConfirmationDialog,
+  type IncidentConfirmationData,
+} from "@/components/organisms/incidents/IncidentConfirmationDialog";
 
 // ─── Catálogos estáticos — reemplazar con llamadas a API ─────────────────────
 
@@ -29,17 +35,40 @@ const INCIDENT_TYPES = [
 
 // ─── Service stub — reemplazar con tu capa de servicios ──────────────────────
 
-async function submitIncident(data: IncidentReportData): Promise<void> {
+async function submitIncident(
+  data: IncidentReportData,
+): Promise<IncidentConfirmationData> {
   await new Promise((r) => setTimeout(r, 1000));
-  console.log("Incidente enviado:", data);
+  // Aquí irá el POST + conexión a websocket
+  return {
+    incidentId: "201",
+    status: "ABIERTO",
+    supervisorNotified: data.safetyChecklist["supervisor_notified"] ?? false,
+  };
 }
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export function MobileIncidentReportPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [confirmation, setConfirmation] =
+    useState<IncidentConfirmationData | null>(null);
+  const [formKey, setFormKey] = useState(0);
+
   const handleSubmit = async (data: IncidentReportData) => {
-    await submitIncident(data);
-    // router.push("/incidents/confirmation")
+    setIsLoading(true);
+    try {
+      const result = await submitIncident(data);
+      setConfirmation(result);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setConfirmation(null);
+    setFormKey((k) => k + 1); // resetea el formulario montando uno nuevo
+    // router.push("/") — cuando tengas router
   };
 
   return (
@@ -52,12 +81,21 @@ export function MobileIncidentReportPage() {
       {/* Form */}
       <div className="px-4 py-6 max-w-lg mx-auto">
         <IncidentReportForm
+          key={formKey}
           machines={MACHINES}
           areas={AREAS}
           incidentTypes={INCIDENT_TYPES}
           onSubmit={handleSubmit}
+          isLoading={isLoading}
         />
       </div>
+
+      {/* Confirmation dialog */}
+      <IncidentConfirmationDialog
+        open={!!confirmation}
+        data={confirmation}
+        onClose={handleClose}
+      />
     </div>
   );
 }
