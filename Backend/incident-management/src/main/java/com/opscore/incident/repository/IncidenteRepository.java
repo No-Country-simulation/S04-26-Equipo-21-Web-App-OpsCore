@@ -9,10 +9,8 @@ import java.util.List;
 public interface IncidenteRepository extends JpaRepository<Incidente, Long> {
     List<Incidente> findByEstado(EstadoIncidente estado);
     List<Incidente> findByPrioridad(Prioridad prioridad);
-
-    // Buscar incidentes de una máquina específica
     List<Incidente> findByEstacionId(Long estacionId);
 
-    // Buscar incidentes por área (útil para Supervisores)
+    // Filtra incidentes por el ID del área vinculada a la estación
     List<Incidente> findByEstacionAreaId(Long areaId);
 }

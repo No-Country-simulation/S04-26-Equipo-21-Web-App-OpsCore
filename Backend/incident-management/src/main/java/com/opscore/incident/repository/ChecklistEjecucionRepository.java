@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ChecklistEjecucionRepository extends JpaRepository<ChecklistEjecucion, Long> {
-    // Ver historial de checklists de una máquina
-    List<ChecklistEjecucion> findByEstacionIdOrderByFechaRealizacionDesc(Long estacionId);
+    // Corregido: Ahora usa 'CreatedAt' de BaseEntity en lugar de 'FechaRealizacion'
+    List<ChecklistEjecucion> findByEstacionIdOrderByCreatedAtDesc(Long estacionId);
 }

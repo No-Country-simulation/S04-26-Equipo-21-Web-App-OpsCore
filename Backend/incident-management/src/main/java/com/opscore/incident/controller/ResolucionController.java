@@ -11,15 +11,15 @@ public class ResolucionController {
 
     private final ResolucionService resolucionService;
 
-
-    @PostMapping("/asignar")
-    public Resolucion asignarResponsable(@RequestParam Long incidenteId, @RequestParam Long usuarioId) {
-        return resolucionService.asignarResponsable(incidenteId, usuarioId);
-    }
-
-    @PutMapping("/{id}/cerrar")
-    public Resolucion cerrarIncidente(@PathVariable Long id, @RequestParam String descripcionSolucion) {
-        return resolucionService.cerrarIncidente(id, descripcionSolucion);
-    }
+//recomendado
+   // @PostMapping("/asignar")
+   // public Resolucion asignarResponsable(@RequestParam Long incidenteId, @RequestParam Long usuarioId) {
+   //     return resolucionService.asignarResponsable(incidenteId, usuarioId);
+   // }
+//
+   // @PutMapping("/{id}/cerrar")
+   // public Resolucion cerrarIncidente(@PathVariable Long id, @RequestParam String descripcionSolucion) {
+   //     return resolucionService.cerrarIncidente(id, descripcionSolucion);
+   // }
 }
 
