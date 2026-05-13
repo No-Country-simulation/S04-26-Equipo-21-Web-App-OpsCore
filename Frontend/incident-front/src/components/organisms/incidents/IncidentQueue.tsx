@@ -1,15 +1,6 @@
 import { AppText } from "@/components/atoms";
-import {
-  IncidentQueueItem,
-  type IncidentQueueItemData,
-} from "@/components/molecules/incidents/IncidentQueueItem";
-
-type IncidentQueueProps = {
-  incidents: IncidentQueueItemData[];
-  onView: (id: string) => void;
-  onStartWork: (id: string) => void;
-  isLoading?: boolean;
-};
+import { IncidentQueueItem } from "@/components/molecules/incidents/IncidentQueueItem";
+import type { IncidentQueueProps } from "../types";
 
 export function IncidentQueue({
   incidents,

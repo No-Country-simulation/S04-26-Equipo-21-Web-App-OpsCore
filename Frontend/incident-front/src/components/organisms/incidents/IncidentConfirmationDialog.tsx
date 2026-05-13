@@ -1,20 +1,11 @@
-import { AppDialog } from "@/components/atoms/AppDialog/AppDialog";
-import { AppButton } from "@/components/atoms";
-import { AppBadge } from "@/components/atoms";
-import { AppDivider } from "@/components/atoms";
-import { AppText } from "@/components/atoms";
-
-export type IncidentConfirmationData = {
-  incidentId: string;
-  status: string;
-  supervisorNotified: boolean;
-};
-
-type IncidentConfirmationDialogProps = {
-  open: boolean;
-  data: IncidentConfirmationData | null;
-  onClose: () => void;
-};
+import {
+  AppButton,
+  AppDialog,
+  AppBadge,
+  AppDivider,
+  AppText,
+} from "@/components/atoms";
+import type { IncidentConfirmationDialogProps } from "../types";
 
 export function IncidentConfirmationDialog({
   open,

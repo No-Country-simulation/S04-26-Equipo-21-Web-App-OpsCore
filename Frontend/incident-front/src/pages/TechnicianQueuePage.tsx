@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { AppSheet } from "@/components/atoms/AppSheet/AppSheet";
 import { IncidentQueue } from "@/components/organisms/incidents/IncidentQueue";
-import {
-  IncidentWorkspace,
-  type IncidentDetail,
-  type WorkspacePayload,
-} from "@/components/organisms/incidents/IncidentWorkspace";
-import type { IncidentQueueItemData } from "@/components/molecules/incidents/IncidentQueueItem";
+import { IncidentWorkspace } from "@/components/organisms/incidents/IncidentWorkspace";
+import { IncidentTimeline } from "@/components/organisms/incidents/IncidentTimeline";
+import type { IncidentQueueItemData } from "@/components/molecules/types";
+import type {
+  IncidentDetail,
+  WorkspacePayload,
+  IncidentTimelineData,
+} from "@/components/organisms/types";
 
-// ─── Stubs — reemplazar con API + websockets ──────────────────────────────────
+// ─── WIP API ──────────────────────────────────
+
+type SheetMode = "timeline" | "workspace" | null;
 
 const MOCK_INCIDENTS: IncidentQueueItemData[] = [
   { id: "201", machine: "CNC-22", severity: "critical", status: "ABIERTO" },
@@ -40,6 +44,54 @@ const MOCK_DETAIL: Record<string, IncidentDetail> = {
   },
 };
 
+const MOCK_TIMELINES: Record<string, IncidentTimelineData> = {
+  "201": {
+    incidentId: "201",
+    events: [
+      {
+        id: "1",
+        time: "10:01",
+        description: "Incidente reportado por operador",
+      },
+      { id: "2", time: "10:03", description: "Supervisor notificado" },
+      { id: "3", time: "10:06", description: "Asignado a Carlos" },
+      { id: "4", time: "10:42", description: "Técnico inició trabajo" },
+      { id: "5", time: "11:15", description: "Causa raíz clasificada" },
+      { id: "6", time: "11:48", description: "Incidente resuelto" },
+    ],
+    resolutionTime: "1h 47m",
+    slaStatus: "within_sla",
+  },
+  "198": {
+    incidentId: "198",
+    events: [
+      {
+        id: "1",
+        time: "09:10",
+        description: "Incidente reportado por operador",
+      },
+      { id: "2", time: "09:12", description: "Supervisor notificado" },
+      { id: "3", time: "09:20", description: "Asignado a Carlos" },
+      { id: "4", time: "09:45", description: "Técnico inició trabajo" },
+    ],
+    slaStatus: "breach_risk",
+  },
+  "176": {
+    incidentId: "176",
+    events: [
+      {
+        id: "1",
+        time: "08:30",
+        description: "Incidente reportado por operador",
+      },
+      { id: "2", time: "08:32", description: "Supervisor notificado" },
+    ],
+    slaStatus: "within_sla",
+  },
+};
+
+// ─── API helpers ──────────────────────────────
+
 async function saveProgress(
   id: string,
   payload: WorkspacePayload,
@@ -56,18 +108,29 @@ async function resolveIncident(
   console.log("Incidente resuelto:", id, payload);
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
 
 export function TechnicianQueuePage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sheetMode, setSheetMode] = useState<SheetMode>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
 
   const selectedIncident = selectedId ? MOCK_DETAIL[selectedId] : null;
+  const selectedTimeline = selectedId ? MOCK_TIMELINES[selectedId] : null;
 
-  const handleView = (id: string) => setSelectedId(id);
-  const handleStartWork = (id: string) => setSelectedId(id);
-  const handleClose = () => setSelectedId(null);
+  const handleView = (id: string) => {
+    setSelectedId(id);
+    setSheetMode("timeline");
+  };
+  const handleStartWork = (id: string) => {
+    setSelectedId(id);
+    setSheetMode("workspace");
+  };
+  const handleClose = () => {
+    setSelectedId(null);
+    setSheetMode(null);
+  };
 
   const handleSave = async (payload: WorkspacePayload) => {
     if (!selectedId) return;
@@ -92,12 +155,10 @@ export function TechnicianQueuePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-4">
         <h1 className="text-lg font-semibold">Incidentes Asignados</h1>
       </div>
 
-      {/* Queue */}
       <div className="px-4 py-6 max-w-lg mx-auto">
         <IncidentQueue
           incidents={MOCK_INCIDENTS}
@@ -106,9 +167,22 @@ export function TechnicianQueuePage() {
         />
       </div>
 
-      {/* Workspace Sheet — slides up from bottom */}
+      {/* Ver — trazabilidad */}
       <AppSheet
-        open={!!selectedId}
+        open={sheetMode === "timeline" && !!selectedTimeline}
+        onOpenChange={(v) => {
+          if (!v) handleClose();
+        }}
+        title={selectedId ? `Incidente #${selectedId} — Trazabilidad` : ""}
+        side="bottom"
+        showCloseButton
+      >
+        {selectedTimeline && <IncidentTimeline data={selectedTimeline} />}
+      </AppSheet>
+
+      {/* Atender — workspace */}
+      <AppSheet
+        open={sheetMode === "workspace" && !!selectedIncident}
         onOpenChange={(v) => {
           if (!v) handleClose();
         }}

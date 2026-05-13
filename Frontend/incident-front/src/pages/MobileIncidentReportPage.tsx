@@ -1,13 +1,10 @@
 import { useState } from "react";
-
 import {
   IncidentReportForm,
   type IncidentReportData,
 } from "@/components/organisms/incidents/IncidentReportForm";
-import {
-  IncidentConfirmationDialog,
-  type IncidentConfirmationData,
-} from "@/components/organisms/incidents/IncidentConfirmationDialog";
+import { IncidentConfirmationDialog } from "@/components/organisms/incidents/IncidentConfirmationDialog";
+import type { IncidentConfirmationData } from "@/components/organisms/types";
 
 // ─── Catálogos estáticos — reemplazar con llamadas a API ─────────────────────
 
@@ -33,7 +30,7 @@ const INCIDENT_TYPES = [
   { value: "maintenance", label: "Mantenimiento preventivo" },
 ];
 
-// ─── Service stub — reemplazar con tu capa de servicios ──────────────────────
+// ─── WIP API ──────────────────────
 
 async function submitIncident(
   data: IncidentReportData,
@@ -43,11 +40,14 @@ async function submitIncident(
   return {
     incidentId: "201",
     status: "ABIERTO",
-    supervisorNotified: data.safetyChecklist["supervisor_notified"] ?? false,
+    supervisorNotified:
+      (data.safetyChecklist as Record<string, boolean>)[
+        "supervisor_notified"
+      ] ?? false,
   };
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────
 
 export function MobileIncidentReportPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -67,18 +67,15 @@ export function MobileIncidentReportPage() {
 
   const handleClose = () => {
     setConfirmation(null);
-    setFormKey((k) => k + 1); // resetea el formulario montando uno nuevo
-    // router.push("/") — cuando tengas router
+    setFormKey((k) => k + 1);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-4">
         <h1 className="text-lg font-semibold">Reportar Incidente</h1>
       </div>
 
-      {/* Form */}
       <div className="px-4 py-6 max-w-lg mx-auto">
         <IncidentReportForm
           key={formKey}
@@ -90,7 +87,6 @@ export function MobileIncidentReportPage() {
         />
       </div>
 
-      {/* Confirmation dialog */}
       <IncidentConfirmationDialog
         open={!!confirmation}
         data={confirmation}

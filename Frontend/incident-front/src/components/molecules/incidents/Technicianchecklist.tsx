@@ -1,15 +1,6 @@
-import { AppCheckbox } from "@/components/atoms/AppCheckbox/AppCheckbox";
-import { AppLabel } from "@/components/atoms";
-import { AppText } from "@/components/atoms";
-import { AppDivider } from "@/components/atoms";
+import { AppLabel, AppCheckbox, AppText, AppDivider } from "@/components/atoms";
 import { TECHNICIAN_CHECKLIST_ITEMS } from "@/constants";
-
-type TechnicianChecklistProps = {
-  checked: Record<string, boolean>;
-  onChange: (id: string, value: boolean) => void;
-  errorMessage?: string;
-  disabled?: boolean;
-};
+import type { TechnicianChecklistProps } from "../types";
 
 export function TechnicianChecklist({
   checked,

@@ -1,49 +1,47 @@
 import { useState } from "react";
-import {
-  LoginForm,
-  type LoginCredentials,
-} from "@/components/organisms/auth/LoginForm";
-import {
-  TwoFactorForm,
-  type TwoFactorPayload,
-} from "@/components/organisms/auth/TwoFactorForm";
+import { LoginForm } from "@/components/organisms/auth/LoginForm";
+import { TwoFactorForm } from "@/components/organisms/auth/TwoFactorForm";
+import { useNavigate } from "react-router-dom";
+import type {
+  LoginCredentials,
+  TwoFactorPayload,
+} from "@/components/organisms/types";
+import type { Step } from "@/types";
 
-// ─── Step machine ────────────────────────────────────────────────────────────
-type Step = "login" | "2fa";
-
-// ─── Service stubs — swap for your real API layer ────────────────────────────
-async function signIn(
-  credentials: LoginCredentials,
-): Promise<{ requires2fa: boolean }> {
+// ─── WIP - API HELPERS ────────────────────────────
+async function signIn(credentials: LoginCredentials): Promise<void> {
   await new Promise((r) => setTimeout(r, 800));
-  return { requires2fa: credentials.role === "technician" };
+
+  const isValidUser =
+    credentials.email === "admin@admin.com" && credentials.password === "admin";
+
+  if (!isValidUser) {
+    throw new Error("Credenciales inválidas");
+  }
 }
 
 async function verify2fa(payload: TwoFactorPayload): Promise<void> {
   await new Promise((r) => setTimeout(r, 800));
-  if (payload.code !== "123456")
-    throw new Error("Codigo 2FA inválido. intenta otra vez.");
+
+  if (payload.code !== "999999") {
+    throw new Error("Código MFA inválido");
+  }
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────
 export function LoginPage() {
+  const navigate = useNavigate();
   const [step, setStep] = useState<Step>("login");
   const [isLoading, setIsLoading] = useState(false);
   const [pageError, setPageError] = useState<string | undefined>();
-  const [pendingCredentials, setPendingCredentials] =
-    useState<LoginCredentials | null>(null);
 
   const handleLogin = async (credentials: LoginCredentials) => {
     setIsLoading(true);
     setPageError(undefined);
+
     try {
-      const { requires2fa } = await signIn(credentials);
-      setPendingCredentials(credentials);
-      if (requires2fa) {
-        setStep("2fa");
-      } else {
-        redirectToDashboard(credentials.role);
-      }
+      await signIn(credentials);
+      setStep("2fa");
     } catch (err) {
       setPageError(
         err instanceof Error
@@ -58,9 +56,10 @@ export function LoginPage() {
   const handle2fa = async (payload: TwoFactorPayload) => {
     setIsLoading(true);
     setPageError(undefined);
+
     try {
       await verify2fa(payload);
-      redirectToDashboard(pendingCredentials?.role ?? "technician");
+      navigate("/check");
     } catch (err) {
       setPageError(
         err instanceof Error
@@ -76,15 +75,9 @@ export function LoginPage() {
     setPageError(undefined);
   };
 
-  const redirectToDashboard = (role: string) => {
-    // e.g. router.push(`/dashboard/${role}`)
-    console.log(`Redirecting ${role} to dashboard`);
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
-        {/* Brand */}
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">OpsCore</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -94,9 +87,7 @@ export function LoginPage() {
           </p>
         </div>
 
-        {/* Card */}
         <div className="rounded-xl border bg-card p-6 shadow-sm">
-          {/* Page-level error (API errors, not field validation) */}
           {pageError && (
             <div
               role="alert"
@@ -119,7 +110,6 @@ export function LoginPage() {
           )}
         </div>
 
-        {/* Footer */}
         <p className="text-center text-xs text-muted-foreground mt-6">
           OpsCore · Incident Operations Platform
         </p>

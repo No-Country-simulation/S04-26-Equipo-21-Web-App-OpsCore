@@ -1,15 +1,7 @@
 import { useRef, type KeyboardEvent, type ClipboardEvent } from "react";
 import { AppLabel } from "@/components/atoms";
-
-const OTP_LENGTH = 6;
-
-type OtpInputProps = {
-  label?: string;
-  value: string;
-  onChange: (value: string) => void;
-  errorMessage?: string;
-  disabled?: boolean;
-};
+import { OTP_LENGTH } from "@/constants";
+import type { OtpInputProps } from "../types";
 
 export function OtpInput({
   label = "Codigo de verificación",
@@ -57,7 +49,11 @@ export function OtpInput({
     <div className="flex flex-col gap-1.5">
       <AppLabel>{label}</AppLabel>
 
-      <div className="flex gap-2" role="group" aria-label={label}>
+      <div
+        className="flex gap-2 items-center mt-2 justify-center"
+        role="group"
+        aria-label={label}
+      >
         {digits.map((digit, index) => (
           <input
             key={index}
@@ -73,7 +69,7 @@ export function OtpInput({
             maxLength={1}
             disabled={disabled}
             aria-label={`Digit ${index + 1} of ${OTP_LENGTH}`}
-            className="w-10 h-8 rounded-lg border border-black bg-white text-center text-base font-mono"
+            className="w-10 h-10 rounded-lg border border-black bg-white text-center text-base font-mono"
           />
         ))}
       </div>
