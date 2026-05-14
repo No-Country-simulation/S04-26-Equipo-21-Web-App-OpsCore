@@ -1,11 +1,6 @@
 import { AppCheckbox } from "@/components/atoms/AppCheckbox/AppCheckbox";
 import { AppLabel } from "@/components/atoms";
-
-type TrustDeviceCheckboxProps = {
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-  disabled?: boolean;
-};
+import type { TrustDeviceCheckboxProps } from "../types";
 
 export function TrustDeviceCheckbox({
   checked,

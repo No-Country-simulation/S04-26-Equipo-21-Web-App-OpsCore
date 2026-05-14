@@ -1,25 +1,25 @@
-import { AppLabel, AppDivider, AppText, AppCheckbox } from "@/components/atoms";
-import { SAFETY_ITEMS } from "@/constants";
-import type { SafetyChecklistProps } from "../types";
+import { AppLabel, AppCheckbox, AppText, AppDivider } from "@/components/atoms";
+import { TECHNICIAN_CHECKLIST_ITEMS } from "@/constants";
+import type { TechnicianChecklistProps } from "../types";
 
-export function SafetyChecklist({
+export function TechnicianChecklist({
   checked,
   onChange,
   errorMessage,
   disabled,
-}: SafetyChecklistProps) {
+}: TechnicianChecklistProps) {
   return (
     <div className="flex flex-col gap-0 rounded-lg border border-border overflow-hidden">
       <div className="px-4 py-3 bg-muted/50">
         <AppText className="text-sm font-medium">
-          Checklist de Seguridad
+          Verificación de Checklist
         </AppText>
       </div>
 
       <AppDivider />
 
       <div className="flex flex-col divide-y divide-border">
-        {SAFETY_ITEMS.map((item) => (
+        {TECHNICIAN_CHECKLIST_ITEMS.map((item) => (
           <label
             key={item.id}
             className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-muted/30 transition-colors"

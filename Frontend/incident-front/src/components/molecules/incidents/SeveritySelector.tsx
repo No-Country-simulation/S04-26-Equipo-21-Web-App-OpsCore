@@ -1,20 +1,6 @@
-import { AppLabel } from "@/components/atoms";
-import { AppText } from "@/components/atoms";
-
-export type Severity = "low" | "medium" | "critical";
-
-const OPTIONS: { value: Severity; label: string }[] = [
-  { value: "low", label: "Baja" },
-  { value: "medium", label: "Media" },
-  { value: "critical", label: "Crítica" },
-];
-
-type SeveritySelectorProps = {
-  value: Severity | "";
-  onChange: (value: Severity) => void;
-  errorMessage?: string;
-  disabled?: boolean;
-};
+import { AppLabel, AppText } from "@/components/atoms";
+import { OPTIONS } from "@/constants";
+import type { SeveritySelectorProps } from "../types";
 
 export function SeveritySelector({
   value,
