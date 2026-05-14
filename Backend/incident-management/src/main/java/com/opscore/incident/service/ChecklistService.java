@@ -1,7 +1,9 @@
 package com.opscore.incident.service;
 
-import com.opscore.incident.model.ChecklistEjecucion;
-import com.opscore.incident.repository.ChecklistEjecucionRepository;
+import com.opscore.incident.dto.ChecklistRequestDTO;
+import com.opscore.incident.mapper.ChecklistMapper;
+import com.opscore.incident.model.*;
+import com.opscore.incident.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,26 +14,37 @@ public class ChecklistService {
 
     private final ChecklistEjecucionRepository ejecucionRepository;
     private final IncidenteService incidenteService;
+    private final ChecklistMapper checklistMapper;
 
-    /**
-     * Procesa la inspección inicial de jornada de un operador.
-     * Si se detectan fallas, dispara automáticamente un incidente crítico.
-     */
+    // Repositorios necesarios para buscar por ID
+    private final ChecklistRepository checklistRepository;
+    private final EstacionTrabajoRepository estacionRepository;
+    private final UsuarioRepository usuarioRepository;
+
     @Transactional
-    public ChecklistEjecucion registrarInspeccion(ChecklistEjecucion ejecucion) {
-        // 1. Guardamos la ejecución en la base de datos
+    public void registrarInspeccion(ChecklistRequestDTO dto) {
+        // 1. Buscamos las entidades reales en la BD usando los IDs del DTO
+        Checklist plantilla = checklistRepository.findById(dto.getPlantillaId())
+                .orElseThrow(() -> new RuntimeException("Plantilla no encontrada"));
+
+        EstacionTrabajo estacion = estacionRepository.findById(dto.getEstacionId())
+                .orElseThrow(() -> new RuntimeException("Estación no encontrada"));
+
+        Usuario operador = usuarioRepository.findById(dto.getOperadorId())
+                .orElseThrow(() -> new RuntimeException("Operador no encontrado"));
+
+        // 2. Usamos el Mapper para convertir el DTO en una Entidad completa
+        ChecklistEjecucion ejecucion = checklistMapper.toEntity(dto, plantilla, estacion, operador);
+
+        // 3. Guardamos la ejecución
         ChecklistEjecucion guardado = ejecucionRepository.save(ejecucion);
 
-        // 2. Evaluamos si existe alguna falla en los puntos de control
-        // Usamos streams para buscar si alguna respuesta tiene completado = false
-        boolean tieneFallas = ejecucion.getRespuestas().stream()
-                .anyMatch(respuesta -> !respuesta.isCompletado());
+        // 4. Lógica de negocio: Si hay fallas, disparamos incidente
+        boolean tieneFallas = dto.getRespuestas().stream()
+                .anyMatch(r -> !r.isCompletado());
 
-        // 3. Si hay fallas, delegamos la creación del incidente al servicio especializado
         if (tieneFallas) {
             incidenteService.crearIncidenteDesdeChecklist(guardado);
         }
-
-        return guardado;
     }
 }

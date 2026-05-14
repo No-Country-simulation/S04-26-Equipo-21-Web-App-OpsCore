@@ -1,5 +1,7 @@
 package com.opscore.incident.service;
 
+import com.opscore.incident.dto.IncidenteResponseDTO;
+import com.opscore.incident.mapper.IncidenteMapper;
 import com.opscore.incident.model.ChecklistEjecucion;
 import com.opscore.incident.model.Incidente;
 import com.opscore.incident.model.Usuario;
@@ -37,19 +39,29 @@ public class IncidenteService {
         incidenteRepository.save(nuevoIncidente);
     }
 
-    private void asignarTecnicoAutomatico(Incidente incidente, Long especialidadId) {
-        List<Usuario> tecnicosAptos = usuarioRepository.findTecnicoAsignable(
-                incidente.getEstacion().getArea().getId(),
-                especialidadId
-        );
+    // Dentro de IncidenteService.java
 
-        if (!tecnicosAptos.isEmpty()) {
-            Usuario tecnico = tecnicosAptos.get(0);
+    private final NotificationService notificationService; // Inyectar el nuevo servicio
+
+    @Transactional
+    public void asignarTecnicoAutomatico(Incidente incidente, Long especialidadId) {
+        List<Usuario> aptos = usuarioRepository.findTecnicoAsignable(
+                incidente.getArea().getId(), especialidadId);
+
+        if (!aptos.isEmpty()) {
+            Usuario tecnico = aptos.get(0);
             incidente.setTecnico(tecnico);
             incidente.setEstado(EstadoIncidente.EN_PROCESO);
-            tecnico.setDisponible(false); // Lo marcamos como ocupado
+            tecnico.setDisponible(false);
+
+            usuarioRepository.save(tecnico);
+
+            // NOTIFICACIÓN EN TIEMPO REAL
+            String aviso = "Nuevo incidente crítico asignado en " + incidente.getEstacion().getNombre();
+            notificationService.enviarNotificacionAsignacion(tecnico.getNumeroReloj(), aviso);
         }
     }
+
     @Transactional
     public Incidente reportarFalla(Incidente incidente, Long especialidadId) {
         // Buscamos técnicos que cumplan: Área + Especialidad + Conectado + Disponible
@@ -72,6 +84,40 @@ public class IncidenteService {
         }
 
         return incidenteRepository.save(incidente);
+    }
+
+    // Dentro de IncidenteService.java
+
+    private final IncidenteMapper incidenteMapper;
+
+    @Transactional
+    public IncidenteResponseDTO reportarFallaManual(Incidente incidente, Long especialidadId) {
+        // Buscamos técnicos aptos
+        List<Usuario> tecnicosAptos = usuarioRepository.findTecnicoAsignable(
+                incidente.getArea().getId(),
+                especialidadId
+        );
+
+        if (!tecnicosAptos.isEmpty()) {
+            Usuario asignado = tecnicosAptos.get(0);
+            incidente.setTecnico(asignado);
+            incidente.setEstado(EstadoIncidente.EN_PROCESO);
+            asignado.setDisponible(false);
+            usuarioRepository.save(asignado);
+
+            // Notificación
+            notificationService.enviarNotificacionAsignacion(
+                    asignado.getNumeroReloj(),
+                    "Nueva falla reportada en: " + incidente.getEstacion().getNombre()
+            );
+        } else {
+            incidente.setEstado(EstadoIncidente.ABIERTO);
+        }
+
+        Incidente guardado = incidenteRepository.save(incidente);
+
+        // DEVOLVEMOS DTO EN LUGAR DE ENTIDAD
+        return incidenteMapper.toDTO(guardado);
     }
 
 }
