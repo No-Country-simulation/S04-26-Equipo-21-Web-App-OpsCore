@@ -2,17 +2,7 @@ import { useState } from "react";
 import { AppButton } from "@/components/atoms";
 import { OtpInput } from "@/components/molecules/auth/OtpInput";
 import { TrustDeviceCheckbox } from "@/components/molecules/auth/TrustDeviceCheckbox";
-
-export type TwoFactorPayload = {
-  code: string;
-  trustDevice: boolean;
-};
-
-type TwoFactorFormProps = {
-  onSubmit: (payload: TwoFactorPayload) => Promise<void> | void;
-  onBack?: () => void;
-  isLoading?: boolean;
-};
+import type { TwoFactorFormProps } from "../types";
 
 export function TwoFactorForm({
   onSubmit,

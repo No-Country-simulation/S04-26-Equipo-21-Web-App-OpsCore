@@ -16,24 +16,24 @@ public class IncidenteController {
 
     private final IncidenteService incidenteService;
 
-
-    @PostMapping
-    public Incidente reportarIncidente(@RequestBody Incidente incidente) {
-        return incidenteService.reportarIncidente(incidente);
-    }
-
-    @GetMapping("/estado/{estado}")
-    public List<Incidente> listarPorEstado(@PathVariable EstadoIncidente estado) {
-        return incidenteService.listarPorEstado(estado);
-    }
-
-    @GetMapping("/prioridad/{prioridad}")
-    public List<Incidente> listarPorPrioridad(@PathVariable Prioridad prioridad) {
-        return incidenteService.listarPorPrioridad(prioridad);
-    }
-
-    @PutMapping("/{id}/estado")
-    public Incidente actualizarEstado(@PathVariable Long id, @RequestParam EstadoIncidente nuevoEstado) {
-        return incidenteService.actualizarEstado(id, nuevoEstado);
-    }
+// solo son propuesta
+//    @PostMapping
+//    public Incidente reportarIncidente(@RequestBody Incidente incidente) {
+//        return incidenteService.reportarIncidente(incidente);
+//    }
+//
+//    @GetMapping("/estado/{estado}")
+//    public List<Incidente> listarPorEstado(@PathVariable EstadoIncidente estado) {
+//        return incidenteService.listarPorEstado(estado);
+//    }
+//
+//    @GetMapping("/prioridad/{prioridad}")
+//    public List<Incidente> listarPorPrioridad(@PathVariable Prioridad prioridad) {
+//        return incidenteService.listarPorPrioridad(prioridad);
+//    }
+//
+//    @PutMapping("/{id}/estado")
+//    public Incidente actualizarEstado(@PathVariable Long id, @RequestParam EstadoIncidente nuevoEstado) {
+//        return incidenteService.actualizarEstado(id, nuevoEstado);
+//    }
 }

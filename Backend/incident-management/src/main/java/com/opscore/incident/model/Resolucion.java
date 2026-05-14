@@ -27,7 +27,9 @@ public class Resolucion {
     @JoinColumn(name = "responsable_id")
     private Usuario responsable;
 
+    @Column(name = "descripcion_solucion", columnDefinition = "TEXT")
     private String descripcionSolucion;
+
     private LocalDateTime fechaAsignacion;
     private LocalDateTime fechaCierre;
 

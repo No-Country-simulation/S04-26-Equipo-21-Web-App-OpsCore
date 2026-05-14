@@ -1,10 +1,5 @@
-import { type ComponentProps } from "react";
-import { AppLabel } from "../atoms";
-import { AppInput } from "../atoms";
-
-type FormFieldProps = ComponentProps<typeof AppInput> & {
-  label: string;
-};
+import { AppLabel, AppInput } from "../atoms";
+import type { FormFieldProps } from "./types";
 
 export function FormField({
   label,

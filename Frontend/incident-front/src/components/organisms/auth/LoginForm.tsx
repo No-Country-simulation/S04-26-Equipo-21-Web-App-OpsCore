@@ -1,89 +1,71 @@
-import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { AppButton } from "@/components/atoms";
-
 import { FormField } from "@/components/molecules/FormField";
-import {
-  RoleSelector,
-  type UserRole,
-} from "@/components/molecules/auth/RoleSelector";
+import type { LoginFormProps, LoginMode } from "../types";
+import { loginFormSchema } from "../schemas";
 
-export type LoginCredentials = {
-  email: string;
-  password: string;
-  role: UserRole;
-};
-
-type LoginFormErrors = Partial<Record<keyof LoginCredentials, string>>;
-
-type LoginFormProps = {
-  onSubmit: (credentials: LoginCredentials) => Promise<void> | void;
-  isLoading?: boolean;
-};
+type FormValues = yup.InferType<typeof loginFormSchema>;
 
 export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole | "">("");
-  const [errors, setErrors] = useState<LoginFormErrors>({});
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: yupResolver(loginFormSchema),
+    defaultValues: { email: "", password: "" },
+    mode: "onChange",
+  });
 
-  const validate = (): LoginFormErrors => {
-    const e: LoginFormErrors = {};
-    if (!email) e.email = "Email es requerido";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      e.email = "Ingresa un email válido";
-    if (!password) e.password = "Password es requerido";
-    if (!role) e.role = "Selecciona un rol para continuar";
-    return e;
-  };
-
-  const handleSubmit = async () => {
-    const validation = validate();
-    if (Object.keys(validation).length > 0) {
-      setErrors(validation);
-      return;
-    }
-    setErrors({});
-    await onSubmit({ email, password, role: role as UserRole });
-  };
+  const submit = (mode: LoginMode) =>
+    handleSubmit((values) => onSubmit({ ...values, mode }))();
 
   return (
     <div className="flex flex-col gap-5">
-      <FormField
-        label="Email"
-        type="email"
-        autoComplete="email"
-        placeholder="you@company.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        errorMessage={errors.email}
-        disabled={isLoading}
+      <Controller
+        control={control}
+        name="email"
+        render={({ field }) => (
+          <FormField
+            label="Email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@company.com"
+            value={field.value}
+            onChange={field.onChange}
+            errorMessage={errors.email?.message}
+            disabled={isLoading}
+          />
+        )}
       />
 
-      <FormField
-        label="Password"
-        type="password"
-        autoComplete="current-password"
-        placeholder="••••••••"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        errorMessage={errors.password}
-        disabled={isLoading}
+      <Controller
+        control={control}
+        name="password"
+        render={({ field }) => (
+          <FormField
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            value={field.value}
+            onChange={field.onChange}
+            errorMessage={errors.password?.message}
+            disabled={isLoading}
+          />
+        )}
       />
 
-      <RoleSelector
-        label="Rol"
-        value={role}
-        onChange={setRole}
-        errorMessage={errors.role}
-        disabled={isLoading}
-      />
-
-      <AppButton
-        className="w-full mt-2"
-        onClick={handleSubmit}
-        disabled={isLoading}
-        label={isLoading ? "Ingresando" : "Ingresar"}
-      />
+      <div className="flex flex-col gap-3 pt-2">
+        <AppButton
+          className="w-full"
+          onClick={() => submit("default")}
+          disabled={isLoading}
+          label={isLoading ? "Ingresando..." : "Ingresar"}
+        />
+      </div>
     </div>
   );
 }
