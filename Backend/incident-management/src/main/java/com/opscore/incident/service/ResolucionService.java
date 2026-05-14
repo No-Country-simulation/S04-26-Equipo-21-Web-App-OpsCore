@@ -38,7 +38,7 @@ public class ResolucionService {
         // 4. Crear y guardar la entidad Resolucion
         Resolucion nuevaResolucion = Resolucion.builder()
                 .incidente(incidente)
-                .descripcionSolucion(dto.getComentario())
+                .descripcionSolucion(dto.getDescripcionSolucion())
                 .build();
 
         Resolucion guardada = resolucionRepository.save(nuevaResolucion);
