@@ -10,5 +10,6 @@ public class ResolucionResponseDTO {
     private Long id;
     private Long incidenteId;
     private String descripcionSolucion;
+    private String comentario;
     private LocalDateTime fechaResolucion;
 }
