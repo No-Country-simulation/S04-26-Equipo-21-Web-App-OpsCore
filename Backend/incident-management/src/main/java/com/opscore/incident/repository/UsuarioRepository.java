@@ -4,6 +4,7 @@ import com.opscore.incident.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             "AND u.disponible = true")
     List<Usuario> findTecnicoAsignable(@Param("areaId") Long areaId,
                                        @Param("especialidadId") Long especialidadId);
+
+    Optional<Usuario> findByUsername(String username);
 }
