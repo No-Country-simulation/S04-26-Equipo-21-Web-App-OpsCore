@@ -36,7 +36,7 @@ public class HttpSecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/api/auth/login",
-                                        "/api/auth/refresh")
+                                        "/api/auth/refresh","/api/docs/**")
                                 .permitAll()
                                 .requestMatchers("/api/auth/logout").authenticated()
                                 .anyRequest().authenticated())

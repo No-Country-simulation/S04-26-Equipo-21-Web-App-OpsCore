@@ -102,30 +102,34 @@ VALUES (1, 1, true, 'OK'),
 -- INCIDENTES (datos realistas para pruebas)
 -- ============================================================
 INSERT INTO incidentes
-(titulo, descripcion, estado, prioridad,
+(titulo, descripcion, estado, prioridad,tipo,
  area_id, estacion_id, reportado_por_id, tecnico_asignado_id)
 VALUES ('Falla en prensa hidráulica',
         'La máquina no responde al pedal principal',
         'ABIERTO',
-        'CRITICO',
+        'CRITICA',
+        'FALLA_OPERATIVA',
         1, 1, 1, 3),
 
        ('Ruido anormal en torno CNC',
         'Vibración excesiva durante operación',
         'ASIGNADO',
         'NORMAL',
+        'MANTENIMIENTO_PREVENTIVO',
         1, 2, 1, 3),
 
        ('Fuga de aire en compresor',
         'Pérdida de presión constante',
         'EN_PROCESO',
-        'CRITICO',
+        'CRITICA',
+        'MANTENIMIENTO_CORRECTIVO',
         2, 5, 2, 3),
 
        ('Sensor robótico descalibrado',
         'Error en alineación de brazo',
         'RESUELTO',
         'NORMAL',
+        'MANTENIMIENTO_CORRECTIVO',
         2, 4, 2, 3);
 
 -- ============================================================
