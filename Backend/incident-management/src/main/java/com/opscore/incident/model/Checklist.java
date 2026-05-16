@@ -1,6 +1,5 @@
 package com.opscore.incident.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,13 +14,22 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Checklist extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(
+            nullable = false
+    )
     private String titulo;
 
-    @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @Builder.Default
+    @OneToMany(
+            mappedBy = "checklist",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     private List<ChecklistItem> items = new ArrayList<>();
 }
