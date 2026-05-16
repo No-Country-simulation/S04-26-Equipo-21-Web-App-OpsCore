@@ -11,14 +11,15 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ChecklistItem extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 255)
     private String descripcion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "checklist_id")
-    @com.fasterxml.jackson.annotation.JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "checklist_id", nullable = false)
     private Checklist checklist;
 }
