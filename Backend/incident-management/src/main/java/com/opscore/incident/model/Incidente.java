@@ -2,6 +2,7 @@ package com.opscore.incident.model;
 
 import com.opscore.incident.enums.EstadoIncidente;
 import com.opscore.incident.enums.Prioridad;
+import com.opscore.incident.enums.TipoIncidente;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -41,6 +42,15 @@ public class Incidente extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(
+            name = "tipo",
+            nullable = false,
+            columnDefinition = "incidente_tipo"
+    )
+    private TipoIncidente tipo;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false, columnDefinition = "incidente_estado")
     private EstadoIncidente estado;
 
@@ -49,9 +59,10 @@ public class Incidente extends BaseEntity {
     @Column(nullable = false, columnDefinition = "incidente_prioridad")
     private Prioridad prioridad;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "solucion_tecnica", columnDefinition = "TEXT")
     private String solucionTecnica;
 
+    @Column(name = "fecha_cierre")
     private LocalDateTime fechaCierre;
 
     // --- RELACIONES ---
@@ -65,10 +76,10 @@ public class Incidente extends BaseEntity {
     private EstacionTrabajo estacion;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "reportado_por_id")
+    @JoinColumn(name = "reportado_por_id", nullable = false)
     private Usuario operador;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tecnico_asignado_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tecnico_asignado_id", nullable = false)
     private Usuario tecnico;
 }
