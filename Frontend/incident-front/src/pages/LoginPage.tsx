@@ -1,53 +1,36 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { LoginForm } from "@/components/organisms/auth/LoginForm";
 import { TwoFactorForm } from "@/components/organisms/auth/TwoFactorForm";
-import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/Authstore";
+import { getRoleRedirect } from "@/lib/authRedirect";
+import { getErrorMessage } from "@/lib/getErrorMessage";
+import type { AuthUser } from "@/store/Authstore";
 import type {
   LoginCredentials,
   TwoFactorPayload,
 } from "@/components/organisms/types";
 import type { Step } from "@/types";
+import { signIn, verify2fa } from "@/services/auth.services";
 
-// ─── WIP - API HELPERS ────────────────────────────
-async function signIn(credentials: LoginCredentials): Promise<void> {
-  await new Promise((r) => setTimeout(r, 800));
-
-  const isValidUser =
-    credentials.email === "admin@admin.com" && credentials.password === "admin";
-
-  if (!isValidUser) {
-    throw new Error("Credenciales inválidas");
-  }
-}
-
-async function verify2fa(payload: TwoFactorPayload): Promise<void> {
-  await new Promise((r) => setTimeout(r, 800));
-
-  if (payload.code !== "999999") {
-    throw new Error("Código MFA inválido");
-  }
-}
-
-// ───────────────────────────────────────────────────────────────────────
 export function LoginPage() {
   const navigate = useNavigate();
+  const setUser = useAuthStore((s) => s.setUser);
+
   const [step, setStep] = useState<Step>("login");
   const [isLoading, setIsLoading] = useState(false);
   const [pageError, setPageError] = useState<string | undefined>();
+  const [pendingUser, setPendingUser] = useState<AuthUser | null>(null);
 
   const handleLogin = async (credentials: LoginCredentials) => {
     setIsLoading(true);
     setPageError(undefined);
-
     try {
-      await signIn(credentials);
+      const user = await signIn(credentials);
+      setPendingUser(user);
       setStep("2fa");
     } catch (err) {
-      setPageError(
-        err instanceof Error
-          ? err.message
-          : "Ingreso fallido. intenta otra vez.",
-      );
+      setPageError(getErrorMessage(err, "Ingreso fallido. Intenta otra vez."));
     } finally {
       setIsLoading(false);
     }
@@ -56,17 +39,17 @@ export function LoginPage() {
   const handle2fa = async (payload: TwoFactorPayload) => {
     setIsLoading(true);
     setPageError(undefined);
-
     try {
       await verify2fa(payload);
-      navigate("/check");
+
+      if (pendingUser) {
+        setUser(pendingUser);
+        navigate(getRoleRedirect(pendingUser.role));
+      }
     } catch (err) {
       setPageError(
-        err instanceof Error
-          ? err.message
-          : "Verificación fallida. intenta otra vez.",
+        getErrorMessage(err, "Verificación fallida. Intenta otra vez."),
       );
-      setIsLoading(false);
     }
   };
 

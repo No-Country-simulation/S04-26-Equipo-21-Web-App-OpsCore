@@ -22,11 +22,8 @@ export const incidentReportSchema = yup.object({
 });
 
 export const loginFormSchema = yup.object({
-  email: yup
-    .string()
-    .required("Email es requerido")
-    .email("Ingresa un email válido"),
-  password: yup.string().required("Password es requerido"),
+  username: yup.string().required("El usuario es requerido"),
+  password: yup.string().required("La contraseña es requerida"),
 });
 
 export const incidentWorkspaceSchema = yup.object({

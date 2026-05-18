@@ -15,7 +15,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: yupResolver(loginFormSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { username: "", password: "" },
     mode: "onChange",
   });
 
@@ -26,16 +26,16 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     <div className="flex flex-col gap-5">
       <Controller
         control={control}
-        name="email"
+        name="username"
         render={({ field }) => (
           <FormField
-            label="Email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@company.com"
+            label="Usuario"
+            type="text"
+            autoComplete="username"
+            placeholder="tu.usuario"
             value={field.value}
             onChange={field.onChange}
-            errorMessage={errors.email?.message}
+            errorMessage={errors.username?.message}
             disabled={isLoading}
           />
         )}
@@ -46,7 +46,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
         name="password"
         render={({ field }) => (
           <FormField
-            label="Password"
+            label="Contraseña"
             type="password"
             autoComplete="current-password"
             placeholder="••••••••"

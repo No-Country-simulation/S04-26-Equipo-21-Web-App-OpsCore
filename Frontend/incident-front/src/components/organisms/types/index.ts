@@ -8,7 +8,7 @@ import type { IncidentReportData } from "../incidents/IncidentReportForm";
 export type LoginMode = "default" | "technician";
 
 export type LoginCredentials = {
-  email: string;
+  username: string;
   password: string;
   mode: LoginMode;
 };
