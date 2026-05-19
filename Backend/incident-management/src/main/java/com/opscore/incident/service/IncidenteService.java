@@ -1,6 +1,7 @@
 package com.opscore.incident.service;
 
 import com.opscore.incident.dto.IncidenteResponseDTO;
+import com.opscore.incident.enums.TipoIncidente;
 import com.opscore.incident.mapper.IncidenteMapper;
 import com.opscore.incident.model.ChecklistEjecucion;
 import com.opscore.incident.model.Incidente;
@@ -29,7 +30,8 @@ public class IncidenteService {
                 .operador(ejecucion.getOperador())
                 .descripcion("Falla detectada en inspección inicial: " + ejecucion.getPlantilla().getTitulo())
                 .estado(EstadoIncidente.ABIERTO)
-                .prioridad(Prioridad.CRITICO) // Por defecto alta al ser preventivo
+                .tipo(TipoIncidente.MANTENIMIENTO_PREVENTIVO)
+                .prioridad(Prioridad.CRITICA) // Por defecto alta al ser preventivo
                 .build();
 
         // Intentamos asignación automática (Lógica de especialidad)

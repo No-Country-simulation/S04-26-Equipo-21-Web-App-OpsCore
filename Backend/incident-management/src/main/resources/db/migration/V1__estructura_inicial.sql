@@ -18,8 +18,22 @@ CREATE TYPE incidente_estado AS ENUM (
     );
 
 CREATE TYPE incidente_prioridad AS ENUM (
+    'BAJA',
     'NORMAL',
-    'CRITICO'
+    'ALTA',
+    'CRITICA'
+    );
+
+CREATE TYPE incidente_tipo AS ENUM (
+    'FALLA_OPERATIVA',
+    'ACCIDENTE',
+    'CASI_ACCIDENTE',
+    'CALIDAD',
+    'MANTENIMIENTO_PREVENTIVO',
+    'MANTENIMIENTO_CORRECTIVO',
+    'SEGURIDAD',
+    'AMBIENTAL',
+    'OTRO'
     );
 
 -- ============================================================
@@ -61,7 +75,7 @@ CREATE TABLE usuarios
     rol          usuario_rol  NOT NULL,
     password     VARCHAR(255) NOT NULL,
 
-    area_id      BIGINT NOT NULL
+    area_id      BIGINT       NOT NULL
         REFERENCES areas (id)
             ON DELETE RESTRICT,
 
@@ -132,25 +146,26 @@ CREATE TABLE incidentes
 
     estado              incidente_estado    NOT NULL,
     prioridad           incidente_prioridad NOT NULL,
+    tipo                incidente_tipo      NOT NULL,
 
     solucion_tecnica    TEXT,
     fecha_cierre        TIMESTAMPTZ,
 
-    area_id             BIGINT
+    area_id             BIGINT              NOT NULL
         REFERENCES areas (id)
             ON DELETE RESTRICT,
 
-    estacion_id         BIGINT
+    estacion_id         BIGINT              NOT NULL
         REFERENCES estaciones_trabajo (id)
             ON DELETE RESTRICT,
 
-    reportado_por_id    BIGINT
-                                            REFERENCES usuarios (id)
-                                                ON DELETE SET NULL,
+    reportado_por_id    BIGINT              NOT NULL
+        REFERENCES usuarios (id)
+            ON DELETE RESTRICT,
 
-    tecnico_asignado_id BIGINT
-                                            REFERENCES usuarios (id)
-                                                ON DELETE SET NULL,
+    tecnico_asignado_id BIGINT              NOT NULL
+        REFERENCES usuarios (id)
+            ON DELETE RESTRICT,
 
     created_at          TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -287,15 +302,15 @@ CREATE TABLE resoluciones
 
 CREATE TABLE metricas
 (
-    id BIGSERIAL PRIMARY KEY,
+    id                         BIGSERIAL PRIMARY KEY,
 
-    periodo VARCHAR(50) NOT NULL,
+    periodo                    VARCHAR(50) NOT NULL,
 
     tiempo_promedio_resolucion DOUBLE PRECISION,
-    tasa_cierre DOUBLE PRECISION,
-    incidentes_criticos INTEGER,
+    tasa_cierre                DOUBLE PRECISION,
+    incidentes_criticos        INTEGER,
 
-    patrones_recurrentes TEXT
+    patrones_recurrentes       TEXT
 );
 
 -- ============================================================
@@ -374,4 +389,4 @@ CREATE INDEX idx_resoluciones_responsable_id
 
 -- metricas
 CREATE INDEX idx_metricas_periodo
-ON metricas (periodo);
+    ON metricas (periodo);
