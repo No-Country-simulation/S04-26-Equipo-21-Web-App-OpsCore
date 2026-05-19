@@ -17,6 +17,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(apiInfo())
                 .addServersItem(devServer())
+                .addServersItem(prodServer())
                 .components(
                         new Components()
                                 .addSecuritySchemes("accessCookieAuth", accessCookieScheme())
@@ -42,7 +43,13 @@ public class OpenApiConfig {
 
     private Server devServer() {
         return new Server()
-                .url("http://localhost:8080")
+                .url("http://localhost:8081")
+                .description("Servidor de desarrollo local");
+    }
+
+    private Server prodServer() {
+        return new Server()
+                .url("http://localhost:9090")
                 .description("Servidor de desarrollo local");
     }
 
