@@ -18,7 +18,7 @@ services:
       start_period: 10s
 
   incident-app:
-    image: incident-management:latest
+    image: eduardomaravill/incident-management:latest
     container_name: incident-management-app
     depends_on:
       postgres-db:
@@ -27,6 +27,7 @@ services:
       DB_URL_CONTAINER: jdbc:postgresql://postgres-db:5432/opscore_db
       DB_POSTGRES_USERNAME: postgres
       DB_POSTGRES_PASSWORD: postgres123
+      SECURE_COOKIE: false
       SPRING_PROFILES_ACTIVE: prod
     ports:
       - "9090:8081"
