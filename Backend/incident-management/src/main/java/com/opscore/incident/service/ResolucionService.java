@@ -38,7 +38,7 @@ public class ResolucionService {
         // 4. Crear y guardar la entidad Resolucion
         Resolucion nuevaResolucion = Resolucion.builder()
                 .incidente(incidente)
-                .descripcionSolucion(dto.getComentario())
+                .descripcionSolucion(dto.getDescripcionSolucion())
                 .build();
 
         Resolucion guardada = resolucionRepository.save(nuevaResolucion);
@@ -48,7 +48,7 @@ public class ResolucionService {
         return ResolucionResponseDTO.builder()
                 .id(guardada.getId())
                 .incidenteId(incidente.getId())
-                .comentario(guardada.getDescripcionSolucion())
+                .descripcionSolucion(guardada.getDescripcionSolucion())
                 .fechaResolucion(LocalDateTime.now()) // O usar la de BaseEntity si aplica
                 .build();
     }
