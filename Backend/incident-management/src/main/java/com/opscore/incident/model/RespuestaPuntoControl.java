@@ -16,18 +16,7 @@ public class RespuestaPuntoControl extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ejecucion_id")
-    private ChecklistEjecucion ejecucion;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    private ChecklistItem item; // A qué punto de la plantilla responde
-
     private boolean completado;
     private String observaciones;
-
-
-
 
 }
