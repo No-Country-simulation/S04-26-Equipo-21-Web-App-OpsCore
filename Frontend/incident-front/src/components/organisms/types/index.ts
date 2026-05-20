@@ -1,14 +1,17 @@
 import type {
   IncidentQueueItemData,
   Severity,
+  SupervisorIncident,
   TimelineEvent,
 } from "@/components/molecules/types";
 import type { IncidentReportData } from "../incidents/IncidentReportForm";
+import type { AssignPayload } from "../supervisor/AssingTechnicianForm";
+import type { ReactNode } from "react";
 
 export type LoginMode = "default" | "technician";
 
 export type LoginCredentials = {
-  email: string;
+  username: string;
   password: string;
   mode: LoginMode;
 };
@@ -56,6 +59,7 @@ export type IncidentReportFormProps = {
   incidentTypes: { value: string; label: string }[];
   onSubmit: (data: IncidentReportData) => Promise<void> | void;
   isLoading?: boolean;
+  onAreaChange?: (areaId: string) => void;
 };
 
 export type IncidentDetail = {
@@ -91,4 +95,28 @@ export type IncidentTimelineData = {
 
 export type IncidentTimelineProps = {
   data: IncidentTimelineData;
+};
+
+export type AssignTechnicianFormProps = {
+  incidentId: string;
+  technicians: { value: string; label: string }[];
+  onSubmit: (payload: AssignPayload) => Promise<void> | void;
+  isLoading?: boolean;
+};
+
+export type IncidentListProps = {
+  incidents: SupervisorIncident[];
+  onView: (id: string) => void;
+  onAssign: (id: string) => void;
+  isLoading?: boolean;
+};
+
+export type RouteTheme = {
+  gradient: string;
+  accent: string;
+};
+
+export type BasePageContainerProps = {
+  children: ReactNode;
+  title?: string;
 };

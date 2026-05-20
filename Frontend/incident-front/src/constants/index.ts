@@ -1,6 +1,6 @@
 import type { SafetyItem, Severity } from "@/components/molecules/types";
 import type { SlaStatus } from "@/components/organisms/types";
-import type { TechnicianChecklistItem } from "@/types";
+import type { RouteTheme, TechnicianChecklistItem } from "@/types";
 
 export const SAFETY_ITEMS: SafetyItem[] = [
   { id: "emergency_stop", label: "Paro de emergencia activado" },
@@ -21,21 +21,24 @@ export const SEVERITY_VARIANT: Record<
   Severity,
   "destructive" | "secondary" | "outline"
 > = {
-  critical: "destructive",
-  medium: "secondary",
-  low: "outline",
+  BAJA: "outline",
+  NORMAL: "secondary",
+  ALTA: "destructive",
+  CRITICA: "destructive",
 };
 
 export const SEVERITY_LABEL: Record<Severity, string> = {
-  critical: "Crítica",
-  medium: "Media",
-  low: "Baja",
+  BAJA: "Baja",
+  NORMAL: "Media",
+  ALTA: "Alta",
+  CRITICA: "Crítica",
 };
 
 export const OPTIONS: { value: Severity; label: string }[] = [
-  { value: "low", label: "Baja" },
-  { value: "medium", label: "Media" },
-  { value: "critical", label: "Crítica" },
+  { value: "BAJA", label: "Baja" },
+  { value: "NORMAL", label: "Media" },
+  { value: "ALTA", label: "Alta" },
+  { value: "CRITICA", label: "Crítica" },
 ];
 
 export const ROOT_CAUSES = [
@@ -54,4 +57,34 @@ export const SLA_BADGE: Record<
   within_sla: { label: "Dentro de SLA", variant: "secondary" },
   breach_risk: { label: "Riesgo de incumplimiento", variant: "outline" },
   breached: { label: "SLA incumplido", variant: "destructive" },
+};
+
+export const INCIDENT_TYPES = [
+  { value: "FALLA_OPERATIVA", label: "Falla operativa" },
+  { value: "ACCIDENTE", label: "Accidente" },
+  { value: "CASI_ACCIDENTE", label: "Casi accidente" },
+  { value: "CALIDAD", label: "Calidad" },
+  { value: "MANTENIMIENTO_PREVENTIVO", label: "Mantenimiento preventivo" },
+  { value: "MANTENIMIENTO_CORRECTIVO", label: "Mantenimiento correctivo" },
+  { value: "SEGURIDAD", label: "Seguridad" },
+  { value: "AMBIENTAL", label: "Ambiental" },
+  { value: "OTRO", label: "Otro" },
+];
+
+export const ROUTE_THEMES: Record<string, RouteTheme> = {
+  "/check": { gradient: "from-blue-500 to-blue-400", accent: "text-blue-500" },
+  "/tec-queue": {
+    gradient: "from-emerald-500 to-teal-400",
+    accent: "text-emerald-500",
+  },
+  "/supervisor": {
+    gradient: "from-violet-500 to-purple-400",
+    accent: "text-violet-500",
+  },
+  "/ui": { gradient: "from-amber-500 to-orange-400", accent: "text-amber-500" },
+};
+
+export const DEFAULT_THEME: RouteTheme = {
+  gradient: "from-slate-400 to-slate-300",
+  accent: "text-slate-500",
 };

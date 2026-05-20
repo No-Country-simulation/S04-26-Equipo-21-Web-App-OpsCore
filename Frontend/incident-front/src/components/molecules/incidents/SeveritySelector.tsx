@@ -1,16 +1,35 @@
+import { type ReactNode } from "react";
 import { AppLabel, AppText } from "@/components/atoms";
-import { OPTIONS } from "@/constants";
-import type { SeveritySelectorProps } from "../types";
+import type { Severity } from "@/components/molecules/types";
+
+const OPTIONS: { value: Severity; label: string }[] = [
+  { value: "BAJA", label: "Baja" },
+  { value: "NORMAL", label: "Media" },
+  { value: "ALTA", label: "Alta" },
+  { value: "CRITICA", label: "Crítica" },
+];
+
+type SeveritySelectorProps = {
+  value: Severity | "";
+  onChange: (value: Severity) => void;
+  errorMessage?: string;
+  disabled?: boolean;
+  icon?: ReactNode;
+};
 
 export function SeveritySelector({
   value,
   onChange,
   errorMessage,
   disabled,
+  icon,
 }: SeveritySelectorProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <AppLabel>Severidad</AppLabel>
+      <AppLabel>
+        {icon}
+        Severidad
+      </AppLabel>
 
       <div className="flex gap-4" role="radiogroup" aria-label="Severidad">
         {OPTIONS.map((opt) => (

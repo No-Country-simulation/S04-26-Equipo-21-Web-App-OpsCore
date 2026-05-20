@@ -44,7 +44,7 @@ export type SafetyChecklistProps = {
   disabled?: boolean;
 };
 
-export type Severity = "low" | "medium" | "critical";
+export type Severity = "BAJA" | "NORMAL" | "ALTA" | "CRITICA";
 
 export type SeveritySelectorProps = {
   value: Severity | "";
@@ -69,4 +69,34 @@ export type TimelineEvent = {
 export type TimelineItemProps = {
   event: TimelineEvent;
   isLast?: boolean;
+};
+
+export type SupervisorIncident = {
+  id: string;
+  machine: string;
+  area: string;
+  type: string;
+  severity: Severity;
+  status: string;
+  assignedTo: string | null;
+  slaRisk: boolean;
+};
+
+export type IncidentCardProps = {
+  incident: SupervisorIncident;
+  onView: (id: string) => void;
+  onAssign: (id: string) => void;
+};
+
+export type IncidentStats = {
+  open: number;
+  inProgress: number;
+  critical: number;
+  slaRisk: number;
+};
+
+export type StatItemProps = {
+  label: string;
+  value: number;
+  highlight?: boolean;
 };

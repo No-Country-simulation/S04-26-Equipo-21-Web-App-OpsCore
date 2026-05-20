@@ -8,7 +8,7 @@ export const incidentReportSchema = yup.object({
   incidentType: yup.string().required("Selecciona el tipo de incidente"),
   severity: yup
     .mixed<Severity>()
-    .oneOf(["low", "medium", "critical"], "Selecciona la severidad")
+    .oneOf(["BAJA", "NORMAL", "ALTA", "CRITICA"], "Selecciona la severidad")
     .required("Selecciona la severidad"),
   safetyChecklist: yup
     .object()
@@ -22,11 +22,8 @@ export const incidentReportSchema = yup.object({
 });
 
 export const loginFormSchema = yup.object({
-  email: yup
-    .string()
-    .required("Email es requerido")
-    .email("Ingresa un email válido"),
-  password: yup.string().required("Password es requerido"),
+  username: yup.string().required("El usuario es requerido"),
+  password: yup.string().required("La contraseña es requerida"),
 });
 
 export const incidentWorkspaceSchema = yup.object({
@@ -43,4 +40,10 @@ export const incidentWorkspaceSchema = yup.object({
     .trim()
     .required("Las notas de diagnóstico son requeridas"),
   rootCause: yup.string().required("Selecciona la causa raíz"),
+});
+
+export const AsignSchema = yup.object({
+  technicianId: yup.string().required("Selecciona un técnico"),
+  priority: yup.string().required("Selecciona la prioridad"),
+  estimatedSla: yup.string().required("Selecciona el SLA estimado"),
 });
