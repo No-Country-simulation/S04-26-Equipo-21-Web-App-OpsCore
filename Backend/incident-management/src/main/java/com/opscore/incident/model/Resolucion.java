@@ -15,23 +15,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Resolucion {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "incidente_id")
     private Incidente incidente;
 
-    @ManyToOne
-    @JoinColumn(name = "responsable_id")
-    private Usuario responsable;
-
-    @Column(name = "descripcion_solucion", columnDefinition = "TEXT")
     private String descripcionSolucion;
 
-    private LocalDateTime fechaAsignacion;
-    private LocalDateTime fechaCierre;
+    @ManyToOne
+    private Usuario tecnico;
 
-    private Long tiempoResolucion; // en minutos u horas
+    private LocalDateTime createdAt;
 }

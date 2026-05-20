@@ -14,10 +14,10 @@ public class IncidenteMapper {
         return IncidenteResponseDTO.builder()
                 .id(incidente.getId())
                 .descripcion(incidente.getDescripcion())
-                .estado(incidente.getEstado())
+                .estadoOperativo(incidente.getEstadoOperativo())
                 .prioridad(incidente.getPrioridad())
-                .nombreEstacion(incidente.getEstacion().getNombre())
-                .nombreTecnico(incidente.getTecnico() != null ? incidente.getTecnico().getNombre() : "No asignado")
+                .estacion(incidente.getEstacion().getNombre())
+                .tecnico(incidente.getTecnico() != null ? incidente.getTecnico().getNombre() : "No asignado")
                 .build();
     }
 }

@@ -1,17 +1,44 @@
 package com.opscore.incident.dto;
 
-import com.opscore.incident.enums.EstadoIncidente;
 import com.opscore.incident.enums.Prioridad;
 import lombok.Builder;
 import lombok.Data;
 
+
+
+import com.opscore.incident.enums.EstadoOperativo;
+import com.opscore.incident.enums.EstadoValidacion;
+import com.opscore.incident.enums.TipoFalla;
+
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class IncidenteResponseDTO {
+
     private Long id;
+
+    private String titulo;
+
     private String descripcion;
-    private EstadoIncidente estado;
+
     private Prioridad prioridad;
-    private String nombreEstacion;
-    private String nombreTecnico; // Solo el nombre del técnico asignado
+
+    private TipoFalla tipoFalla;
+
+    private EstadoOperativo estadoOperativo;
+
+    private EstadoValidacion estadoValidacion;
+
+    private String area;
+
+    private String estacion;
+
+    private String tecnico;
+
+    private LocalDateTime fechaCreacion;
+
+    private LocalDateTime fechaAsignacion;
+
+    private LocalDateTime fechaResolucion;
 }
