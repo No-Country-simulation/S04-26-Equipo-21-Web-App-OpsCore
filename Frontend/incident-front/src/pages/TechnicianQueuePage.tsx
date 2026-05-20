@@ -5,6 +5,8 @@ import { AppText } from "@/components/atoms";
 import { IncidentQueue } from "@/components/organisms/incidents/IncidentQueue";
 import { IncidentWorkspace } from "@/components/organisms/incidents/IncidentWorkspace";
 import { IncidentTimeline } from "@/components/organisms/incidents/IncidentTimeline";
+import { SaveProgressDialog } from "@/components/organisms/incidents/SaveProgressDialog";
+import { ResolveIncidentDialog } from "@/components/organisms/incidents/ResolveIncidentDialog";
 import { BasePageContainer } from "@/components/organisms/BasePageContainer";
 import type { IncidentQueueItemData } from "@/components/molecules/types";
 import type {
@@ -93,8 +95,6 @@ const MOCK_TIMELINES: Record<string, IncidentTimelineData> = {
   },
 };
 
-// ─── API helpers ──────────────────────────────
-
 async function saveProgress(
   id: string,
   payload: WorkspacePayload,
@@ -119,6 +119,13 @@ export function TechnicianQueuePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
 
+  // Dialogs
+  const [saveDialog, setSaveDialog] = useState<string | null>(null);
+  const [resolveDialog, setResolveDialog] = useState<{
+    id: string;
+    rootCause: string;
+  } | null>(null);
+
   const selectedIncident = selectedId ? MOCK_DETAIL[selectedId] : null;
   const selectedTimeline = selectedId ? MOCK_TIMELINES[selectedId] : null;
 
@@ -140,6 +147,7 @@ export function TechnicianQueuePage() {
     setIsSaving(true);
     try {
       await saveProgress(selectedId, payload);
+      setSaveDialog(selectedId);
     } finally {
       setIsSaving(false);
     }
@@ -150,6 +158,7 @@ export function TechnicianQueuePage() {
     setIsResolving(true);
     try {
       await resolveIncident(selectedId, payload);
+      setResolveDialog({ id: selectedId, rootCause: payload.rootCause });
       handleClose();
     } finally {
       setIsResolving(false);
@@ -157,15 +166,9 @@ export function TechnicianQueuePage() {
   };
 
   return (
-    <BasePageContainer>
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-4">
-          <h1 className="text-lg font-semibold">Incidentes Asignados</h1>
-        </div>
-
+    <BasePageContainer title="Incidentes Asignados">
+      <div className="bg-background">
         <div className="px-4 py-6 max-w-lg mx-auto flex flex-col gap-6">
-          {/* Intro */}
           {MOCK_INCIDENTS.length === 0 ? (
             <div className="flex gap-3 rounded-lg bg-muted/50 border border-border px-4 py-3">
               <ClipboardList
@@ -195,7 +198,6 @@ export function TechnicianQueuePage() {
             </div>
           )}
 
-          {/* Queue */}
           <IncidentQueue
             incidents={MOCK_INCIDENTS}
             onView={handleView}
@@ -203,7 +205,6 @@ export function TechnicianQueuePage() {
           />
         </div>
 
-        {/* Sheet — Timeline */}
         <AppSheet
           open={sheetMode === "timeline" && !!selectedTimeline}
           onOpenChange={(v) => {
@@ -216,7 +217,6 @@ export function TechnicianQueuePage() {
           {selectedTimeline && <IncidentTimeline data={selectedTimeline} />}
         </AppSheet>
 
-        {/* Sheet — Workspace */}
         <AppSheet
           open={sheetMode === "workspace" && !!selectedIncident}
           onOpenChange={(v) => {
@@ -236,6 +236,19 @@ export function TechnicianQueuePage() {
             />
           )}
         </AppSheet>
+
+        <SaveProgressDialog
+          open={!!saveDialog}
+          incidentId={saveDialog}
+          onClose={() => setSaveDialog(null)}
+        />
+
+        <ResolveIncidentDialog
+          open={!!resolveDialog}
+          incidentId={resolveDialog?.id ?? null}
+          rootCause={resolveDialog?.rootCause ?? ""}
+          onClose={() => setResolveDialog(null)}
+        />
       </div>
     </BasePageContainer>
   );

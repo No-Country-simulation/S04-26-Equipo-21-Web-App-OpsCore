@@ -3,6 +3,7 @@ import { UIPage } from "../../pages/UiPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { MobileIncidentReportPage } from "@/pages/MobileIncidentReportPage";
 import { TechnicianQueuePage } from "@/pages/TechnicianQueuePage";
+import { SupervisorDashboardPage } from "@/pages/SupervisorDashboardPage";
 
 export const router = createBrowserRouter([
   {
@@ -24,5 +25,9 @@ export const router = createBrowserRouter([
   {
     path: "/tec-queue",
     element: <TechnicianQueuePage />,
+  },
+  {
+    path: "/supervisor",
+    element: <SupervisorDashboardPage />,
   },
 ]);

@@ -75,12 +75,8 @@ export function MobileIncidentReportPage() {
   };
 
   return (
-    <BasePageContainer>
-      <div className="min-h-screen bg-background">
-        <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-4">
-          <h1 className="text-lg font-semibold">Reportar Incidente</h1>
-        </div>
-
+    <BasePageContainer title="Reportar Incidente">
+      <div className="bg-background">
         <div className="px-4 py-6 max-w-lg mx-auto flex flex-col gap-6">
           <div className="flex gap-3 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
             <TriangleAlert

@@ -1,6 +1,6 @@
 import type { SafetyItem, Severity } from "@/components/molecules/types";
 import type { SlaStatus } from "@/components/organisms/types";
-import type { TechnicianChecklistItem } from "@/types";
+import type { RouteTheme, TechnicianChecklistItem } from "@/types";
 
 export const SAFETY_ITEMS: SafetyItem[] = [
   { id: "emergency_stop", label: "Paro de emergencia activado" },
@@ -70,3 +70,21 @@ export const INCIDENT_TYPES = [
   { value: "AMBIENTAL", label: "Ambiental" },
   { value: "OTRO", label: "Otro" },
 ];
+
+export const ROUTE_THEMES: Record<string, RouteTheme> = {
+  "/check": { gradient: "from-blue-500 to-blue-400", accent: "text-blue-500" },
+  "/tec-queue": {
+    gradient: "from-emerald-500 to-teal-400",
+    accent: "text-emerald-500",
+  },
+  "/supervisor": {
+    gradient: "from-violet-500 to-purple-400",
+    accent: "text-violet-500",
+  },
+  "/ui": { gradient: "from-amber-500 to-orange-400", accent: "text-amber-500" },
+};
+
+export const DEFAULT_THEME: RouteTheme = {
+  gradient: "from-slate-400 to-slate-300",
+  accent: "text-slate-500",
+};

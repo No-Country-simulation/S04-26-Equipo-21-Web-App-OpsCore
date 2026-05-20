@@ -41,3 +41,9 @@ export const incidentWorkspaceSchema = yup.object({
     .required("Las notas de diagnóstico son requeridas"),
   rootCause: yup.string().required("Selecciona la causa raíz"),
 });
+
+export const AsignSchema = yup.object({
+  technicianId: yup.string().required("Selecciona un técnico"),
+  priority: yup.string().required("Selecciona la prioridad"),
+  estimatedSla: yup.string().required("Selecciona el SLA estimado"),
+});

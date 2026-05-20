@@ -12,6 +12,8 @@ export function useAreas() {
   } = useQuery({
     queryKey: ["areas"],
     queryFn: fetchAreas,
+    retry: 1,
+    staleTime: 1000 * 60,
   });
 
   const options = data.map((area) => ({

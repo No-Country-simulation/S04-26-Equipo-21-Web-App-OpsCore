@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type UserRole = "GERENTE" | "TECNICO" | "OPERADOR";
+export type UserRole = "GERENTE" | "TECNICO" | "OPERADOR" | "SUPERVISOR";
 
 export type AuthUser = {
   userId: number;

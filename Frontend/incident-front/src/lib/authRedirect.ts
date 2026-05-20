@@ -6,8 +6,8 @@ export function getRoleRedirect(role: UserRole): string {
       return "/tec-queue";
     case "OPERADOR":
       return "/check";
-    case "GERENTE":
-      return "/ui";
+    case "SUPERVISOR":
+      return "/supervisor";
     default:
       return "/";
   }
