@@ -5,6 +5,10 @@ import {
 } from "@/components/organisms/incidents/IncidentReportForm";
 import { IncidentConfirmationDialog } from "@/components/organisms/incidents/IncidentConfirmationDialog";
 import type { IncidentConfirmationData } from "@/components/organisms/types";
+import { BasePageContainer } from "@/components/organisms/BasePageContainer";
+import { INCIDENT_TYPES } from "@/constants";
+import { useAreas, useEstaciones } from "@/hooks/useInfo";
+import { TriangleAlert } from "lucide-react";
 
 // ─── Catálogos estáticos — reemplazar con llamadas a API ─────────────────────
 
@@ -20,14 +24,6 @@ const AREAS = [
   { value: "production-line-1", label: "Línea de Producción 1" },
   { value: "warehouse", label: "Almacén" },
   { value: "maintenance", label: "Mantenimiento" },
-];
-
-const INCIDENT_TYPES = [
-  { value: "failure", label: "Falla" },
-  { value: "accident", label: "Accidente" },
-  { value: "near_miss", label: "Casi accidente" },
-  { value: "quality", label: "Calidad" },
-  { value: "maintenance", label: "Mantenimiento preventivo" },
 ];
 
 // ─── WIP API ──────────────────────
@@ -54,7 +50,15 @@ export function MobileIncidentReportPage() {
   const [confirmation, setConfirmation] =
     useState<IncidentConfirmationData | null>(null);
   const [formKey, setFormKey] = useState(0);
+  const [selectedArea, setSelectedArea] = useState("");
 
+  const { options: areaOptions, isLoading: areasLoading } = useAreas();
+
+  const {
+    options: estacionOptions,
+    isLoading: estacionesLoading,
+    isError: estacionesError,
+  } = useEstaciones(selectedArea);
   const handleSubmit = async (data: IncidentReportData) => {
     setIsLoading(true);
     try {
@@ -71,27 +75,45 @@ export function MobileIncidentReportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-4">
-        <h1 className="text-lg font-semibold">Reportar Incidente</h1>
-      </div>
+    <BasePageContainer>
+      <div className="min-h-screen bg-background">
+        <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-4">
+          <h1 className="text-lg font-semibold">Reportar Incidente</h1>
+        </div>
 
-      <div className="px-4 py-6 max-w-lg mx-auto">
-        <IncidentReportForm
-          key={formKey}
-          machines={MACHINES}
-          areas={AREAS}
-          incidentTypes={INCIDENT_TYPES}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
+        <div className="px-4 py-6 max-w-lg mx-auto flex flex-col gap-6">
+          <div className="flex gap-3 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
+            <TriangleAlert
+              size={16}
+              className="text-amber-500 shrink-0 mt-0.5"
+            />
+            <p className="text-sm text-amber-800">
+              Completa todos los campos con precisión. La información que
+              ingreses será asignada al técnico responsable de atender el
+              incidente.
+            </p>
+          </div>
+          <IncidentReportForm
+            key={formKey}
+            areas={areaOptions.length > 0 ? areaOptions : AREAS}
+            machines={
+              estacionesError || estacionOptions.length === 0
+                ? MACHINES
+                : estacionOptions
+            }
+            incidentTypes={INCIDENT_TYPES}
+            onSubmit={handleSubmit}
+            onAreaChange={setSelectedArea}
+            isLoading={isLoading || areasLoading || estacionesLoading}
+          />
+        </div>
+
+        <IncidentConfirmationDialog
+          open={!!confirmation}
+          data={confirmation}
+          onClose={handleClose}
         />
       </div>
-
-      <IncidentConfirmationDialog
-        open={!!confirmation}
-        data={confirmation}
-        onClose={handleClose}
-      />
-    </div>
+    </BasePageContainer>
   );
 }

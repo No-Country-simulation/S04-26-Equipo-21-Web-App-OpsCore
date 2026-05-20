@@ -21,21 +21,24 @@ export const SEVERITY_VARIANT: Record<
   Severity,
   "destructive" | "secondary" | "outline"
 > = {
-  critical: "destructive",
-  medium: "secondary",
-  low: "outline",
+  BAJA: "outline",
+  NORMAL: "secondary",
+  ALTA: "destructive",
+  CRITICA: "destructive",
 };
 
 export const SEVERITY_LABEL: Record<Severity, string> = {
-  critical: "Crítica",
-  medium: "Media",
-  low: "Baja",
+  BAJA: "Baja",
+  NORMAL: "Media",
+  ALTA: "Alta",
+  CRITICA: "Crítica",
 };
 
 export const OPTIONS: { value: Severity; label: string }[] = [
-  { value: "low", label: "Baja" },
-  { value: "medium", label: "Media" },
-  { value: "critical", label: "Crítica" },
+  { value: "BAJA", label: "Baja" },
+  { value: "NORMAL", label: "Media" },
+  { value: "ALTA", label: "Alta" },
+  { value: "CRITICA", label: "Crítica" },
 ];
 
 export const ROOT_CAUSES = [
@@ -55,3 +58,15 @@ export const SLA_BADGE: Record<
   breach_risk: { label: "Riesgo de incumplimiento", variant: "outline" },
   breached: { label: "SLA incumplido", variant: "destructive" },
 };
+
+export const INCIDENT_TYPES = [
+  { value: "FALLA_OPERATIVA", label: "Falla operativa" },
+  { value: "ACCIDENTE", label: "Accidente" },
+  { value: "CASI_ACCIDENTE", label: "Casi accidente" },
+  { value: "CALIDAD", label: "Calidad" },
+  { value: "MANTENIMIENTO_PREVENTIVO", label: "Mantenimiento preventivo" },
+  { value: "MANTENIMIENTO_CORRECTIVO", label: "Mantenimiento correctivo" },
+  { value: "SEGURIDAD", label: "Seguridad" },
+  { value: "AMBIENTAL", label: "Ambiental" },
+  { value: "OTRO", label: "Otro" },
+];

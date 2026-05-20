@@ -44,7 +44,7 @@ export type SafetyChecklistProps = {
   disabled?: boolean;
 };
 
-export type Severity = "low" | "medium" | "critical";
+export type Severity = "BAJA" | "NORMAL" | "ALTA" | "CRITICA";
 
 export type SeveritySelectorProps = {
   value: Severity | "";

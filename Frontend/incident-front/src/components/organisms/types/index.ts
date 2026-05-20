@@ -56,6 +56,7 @@ export type IncidentReportFormProps = {
   incidentTypes: { value: string; label: string }[];
   onSubmit: (data: IncidentReportData) => Promise<void> | void;
   isLoading?: boolean;
+  onAreaChange?: (areaId: string) => void;
 };
 
 export type IncidentDetail = {

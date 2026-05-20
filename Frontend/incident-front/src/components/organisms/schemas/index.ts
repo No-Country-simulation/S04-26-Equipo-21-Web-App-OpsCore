@@ -8,7 +8,7 @@ export const incidentReportSchema = yup.object({
   incidentType: yup.string().required("Selecciona el tipo de incidente"),
   severity: yup
     .mixed<Severity>()
-    .oneOf(["low", "medium", "critical"], "Selecciona la severidad")
+    .oneOf(["BAJA", "NORMAL", "ALTA", "CRITICA"], "Selecciona la severidad")
     .required("Selecciona la severidad"),
   safetyChecklist: yup
     .object()

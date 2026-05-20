@@ -28,7 +28,11 @@ export function AppSheet({
 }: AppSheetProps) {
   return (
     <Sheet {...props}>
-      <SheetContent side={side} showCloseButton={showCloseButton}>
+      <SheetContent
+        side={side}
+        showCloseButton={showCloseButton}
+        className="h-auto max-h-[85vh] overflow-hidden rounded-t-2xl"
+      >
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           {description && <SheetDescription>{description}</SheetDescription>}

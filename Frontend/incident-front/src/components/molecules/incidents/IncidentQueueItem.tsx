@@ -8,12 +8,15 @@ export function IncidentQueueItem({
   onView,
   onStartWork,
 }: IncidentQueueItemProps) {
+  const isCritical = incident.severity === "CRITICA";
+
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b border-border last:border-0">
+    <div
+      className={`flex items-center justify-between px-4 py-3 border-b border-border last:border-0 ${isCritical ? "border-l-2 border-l-destructive" : ""}`}
+    >
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <AppText className="text-sm font-medium">#{incident.id}</AppText>
-
           <AppText className="text-sm text-muted-foreground">
             {incident.machine}
           </AppText>
@@ -24,21 +27,21 @@ export function IncidentQueueItem({
             label={SEVERITY_LABEL[incident.severity]}
             variant={SEVERITY_VARIANT[incident.severity]}
           />
-
           <AppBadge label={incident.status} variant="outline" />
         </div>
       </div>
 
       <div className="flex items-center gap-2">
         <AppIconButton
-          aria-label="Ver incidente"
+          aria-label="Ver trazabilidad"
+          title="Ver trazabilidad"
           icon={<Eye size={16} />}
           onClick={() => onView(incident.id)}
         />
-
         {incident.status !== "RESUELTO" && (
           <AppIconButton
             aria-label="Atender incidente"
+            title="Atender incidente"
             icon={<Wrench size={16} />}
             onClick={() => onStartWork(incident.id)}
           />
