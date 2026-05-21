@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "incidentes")
@@ -51,4 +52,7 @@ public class Incidente extends BaseEntity {
     private LocalDateTime fechaInicioTrabajo;
     private LocalDateTime fechaResolucion;
     private LocalDateTime fechaCierre;
+
+    @OneToMany(mappedBy = "incidente", cascade = CascadeType.ALL)
+    private List<IncidentHistory> historial;
 }

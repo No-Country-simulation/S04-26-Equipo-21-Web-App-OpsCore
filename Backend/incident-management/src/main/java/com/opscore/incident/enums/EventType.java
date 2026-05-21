@@ -1,0 +1,14 @@
+package com.opscore.incident.enums;
+
+public enum EventType {
+
+    INCIDENT_CREATED,
+    TECH_ASSIGNED,
+    TECH_REASSIGNED,
+    WORK_STARTED,
+    WORK_RESOLVED,
+    SUPERVISOR_VALIDATED,
+    INCIDENT_CLOSED,
+    PRIORITY_CHANGED,
+    COMMENT_ADDED
+}

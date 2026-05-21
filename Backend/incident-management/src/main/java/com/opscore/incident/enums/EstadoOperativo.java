@@ -4,5 +4,8 @@ public enum EstadoOperativo {
     ABIERTO,
     ASIGNADO,
     EN_PROCESO,
-    RESUELTO
+    RESUELTO,
+    VALIDADO,
+    CERRADO
 }
+
