@@ -1,20 +1,7 @@
-import { AppCheckbox } from "@/components/atoms/AppCheckbox/AppCheckBox";
-import { AppLabel } from "@/components/atoms";
-import { AppDivider } from "@/components/atoms";
-import { AppText } from "@/components/atoms";
+import { AppLabel, AppDivider, AppText, AppCheckbox } from "@/components/atoms";
 import { SAFETY_ITEMS } from "@/constants";
-
-export type SafetyItem = {
-  id: string;
-  label: string;
-};
-
-type SafetyChecklistProps = {
-  checked: Record<string, boolean>;
-  onChange: (id: string, value: boolean) => void;
-  errorMessage?: string;
-  disabled?: boolean;
-};
+import type { SafetyChecklistProps } from "../types";
+import { ShieldCheck } from "lucide-react";
 
 export function SafetyChecklist({
   checked,
@@ -24,16 +11,17 @@ export function SafetyChecklist({
 }: SafetyChecklistProps) {
   return (
     <div className="flex flex-col gap-0 rounded-lg border border-border overflow-hidden">
-      {/* Header */}
       <div className="px-4 py-3 bg-muted/50">
-        <AppText className="text-sm font-medium">
-          Checklist de Seguridad
-        </AppText>
+        <div className="px-4 py-3 bg-muted/50 flex items-center gap-2">
+          <ShieldCheck size={14} className="text-muted-foreground" />
+          <AppText className="text-sm font-medium">
+            Checklist de Seguridad
+          </AppText>
+        </div>
       </div>
 
       <AppDivider />
 
-      {/* Items */}
       <div className="flex flex-col divide-y divide-border">
         {SAFETY_ITEMS.map((item) => (
           <label

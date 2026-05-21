@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  postgres-db:
+    image: postgres:18.1-bookworm
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: opscore_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d opscore_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  incident-app:
+    image: eduardomaravill/incident-management:latest
+    container_name: incident-management-app
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      DB_URL_CONTAINER: jdbc:postgresql://postgres-db:5432/opscore_db
+      DB_POSTGRES_USERNAME: postgres
+      DB_POSTGRES_PASSWORD: postgres123
+      SECURE_COOKIE: false
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "9090:8081"

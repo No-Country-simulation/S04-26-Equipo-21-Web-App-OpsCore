@@ -2,11 +2,13 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { UIPage } from "../../pages/UiPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { MobileIncidentReportPage } from "@/pages/MobileIncidentReportPage";
+import { TechnicianQueuePage } from "@/pages/TechnicianQueuePage";
+import { SupervisorDashboardPage } from "@/pages/SupervisorDashboardPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/ui" replace />,
+    element: <Navigate to="/auth" replace />,
   },
   {
     path: "/ui",
@@ -19,5 +21,13 @@ export const router = createBrowserRouter([
   {
     path: "/check",
     element: <MobileIncidentReportPage />,
+  },
+  {
+    path: "/tec-queue",
+    element: <TechnicianQueuePage />,
+  },
+  {
+    path: "/supervisor",
+    element: <SupervisorDashboardPage />,
   },
 ]);

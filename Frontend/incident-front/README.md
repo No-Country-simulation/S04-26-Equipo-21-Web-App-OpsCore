@@ -1,254 +1,217 @@
-# 🧬 Arquitectura Frontend - Incident System
+# 🧬 Arquitectura Frontend - OpsCore Incident System
 
-Este proyecto utiliza una arquitectura basada en **Atomic Design**, combinada con una separación clara de responsabilidades para escalabilidad, mantenibilidad y claridad en el código.
+Sistema de gestión de incidentes industriales desarrollado como proyecto **NoCountry 2026**.
 
-Stack principal:
-- React + Vite
-- TypeScript
-- TailwindCSS
-- Zustand (estado UI)
-- TanStack Query (server state)
-- Axios (HTTP client)
+Construido sobre **Atomic Design** con separación estricta de responsabilidades, pensado para escalar sin deuda técnica.
 
 ---
 
-# 📁 Estructura del proyecto
+## 🛠 Stack principal
+
+| Herramienta | Rol |
+|---|---|
+| React + Vite | Framework UI |
+| TypeScript | Tipado estático |
+| TailwindCSS + shadcn/ui | Estilos y componentes base |
+| Zustand 5 | Estado global de UI |
+| TanStack Query | Server state y caché |
+| Axios | Cliente HTTP |
+| React Hook Form + Yup | Formularios y validación |
+| React Router v6 | Navegación |
+
+---
+
+## 📁 Estructura del proyecto
+
 ```
 src/
+├── app/
+│   ├── config/          # env.ts, configuración global
+│   └── router/          # Definición de rutas
+│
 ├── components/
-│   ├── atoms/
+│   ├── atoms/           # Wrappers de shadcn/ui (AppButton, AppInput...)
 │   ├── molecules/
-│   ├── organisms/
-│   └── templates/
+│   │   ├── auth/        # OtpInput, TrustDeviceCheckbox, RoleSelector
+│   │   ├── incidents/   # SeveritySelector, SafetyChecklist, TimelineItem...
+│   │   └── supervisor/  # StatsBar, IncidentCard
+│   └── organisms/
+│       ├── auth/        # LoginForm, TwoFactorForm, LogoutDialog
+│       ├── incidents/   # IncidentReportForm, IncidentWorkspace, IncidentTimeline...
+│       ├── supervisor/  # IncidentList, AssignTechnicianForm, AssignTechnicianDialog
+│       └── schemas/     # Schemas de Yup por organismo
 │
-├── pages/
+├── pages/               # Composición final — lógica + UI
+│   ├── LoginPage.tsx
+│   ├── MobileIncidentReportPage.tsx
+│   ├── TechnicianQueuePage.tsx
+│   └── SupervisorDashboardPage.tsx
 │
-├── services/
+├── services/            # Llamadas HTTP puras (sin React)
+│   ├── api.ts           # Instancia axios + interceptor refresh
+│   ├── auth.service.ts
+│   └── area.service.ts
 │
-├── hooks/
+├── hooks/               # TanStack Query encapsulado
+│   ├── useAreas.ts
+│   ├── useEstaciones.ts
+│   └── useLogout.ts
 │
-├── store/
+├── store/               # Zustand — solo estado UI
+│   └── authStore.ts
 │
-├── types/
+├── constants/           # Enums y catálogos estáticos del dominio
 │
-├── utils/
+├── lib/                 # Utilidades puras
+│   ├── getErrorMessage.ts
+│   └── authRedirect.ts
 │
-└── app/
-
-```
-# 🧱 Atomic Design (UI Layer)
-
-## 🧩 Atoms
-
-Componentes básicos e indivisibles de UI.
-
-### Características:
-- No tienen lógica de negocio
-- No consumen APIs
-- Son completamente reutilizables
-
-### Ejemplos:
-- Button
-- Input
-- Badge
-- Avatar
-- Text
-
----
-
-## 🧩 Molecules
-
-Combinación de atoms con lógica de UI ligera.
-
-### Características:
-- Componen UI más compleja
-- No conocen el dominio del backend
-- Siguen siendo reutilizables
-
-### Ejemplos:
-- UserBadge
-- StatusTag
-- DateLabel
-- MetricCard
-
----
-
-## 🧩 Organisms
-
-Bloques funcionales completos de UI.
-
-### Características:
-- Representan secciones completas
-- Pueden recibir datos por props
-- Presentan información del dominio
-
-### Ejemplos:
-- IncidentTable
-- IncidentFilters
-- MetricsDashboard
-- ResolutionTimeline
-
----
-
-## 🧩 Templates
-
-Estructuras de layout sin datos reales.
-
-### Características:
-- Definen distribución visual
-- No contienen lógica de negocio
-- Reciben componentes como props
-
-### Ejemplos:
-- IncidentLayout
-- DashboardLayout
-
----
-
-# 📄 Pages (Capa de composición)
-
-Las pages son el punto de conexión entre UI y lógica.
-
-### Responsabilidades:
-- Consumir hooks (TanStack Query)
-- Manejar estado global (Zustand si aplica)
-- Componer templates + organisms
-- Representar rutas
-
-### Ejemplo de flujo:
-- Fetch de datos
-- Paso de datos a organisms
-- Render del template
-
----
-
-# 🌐 Services (API Layer)
-
-Capa encargada de comunicación con backend.
-
-### Características:
-- Sin React
-- Sin estado UI
-- Solo llamadas HTTP
-
-### Ejemplo:
-- incident.api.ts
-- user.api.ts
-
----
-
-# ⚡ Hooks (Server State Layer)
-
-Encapsulan TanStack Query.
-
-### Responsabilidades:
-- Fetching de datos
-- Cacheo automático
-- Revalidación
-
-### Ejemplo:
-- useIncidents
-- useUsers
-- useMetrics
-
----
-
-# 🧠 Store (Zustand - UI State)
-
-Estado global de UI.
-
-### Usos correctos:
-- Modales
-- Filtros UI
-- Sidebars
-- Toggles
-
-### ❌ NO usar para:
-- Data del backend
-- Cache de API
-
----
-
-# 🧾 Types (Contratos TS)
-
-Definición de tipos del dominio.
-
-### Ejemplo:
-- Incidente
-- Usuario
-- Resolución
-- Métrica
-- Checklist
-
----
-
-# 🧰 Utils
-
-Funciones puras reutilizables.
-
-### Ejemplos:
-- formatDate
-- formatNumber
-- helpers de validación
-
----
-
-# 🔄 Flujo de datos
-
-```
-Backend API
-↓
-Services (Axios)
-↓
-Hooks (TanStack Query)
-↓
-Pages
-↓
-Templates
-↓
-Organisms
-↓
-Molecules
-↓
-Atoms
+└── types/               # Contratos TypeScript del dominio
 ```
 
+---
 
-# 🧠 Reglas de arquitectura
+## 🗺 Rutas
 
-## ❌ Prohibido
-- Llamar APIs dentro de components
-- Mezclar UI con lógica de negocio
-- Usar Zustand para server state
-- Romper separación atomic design
+| Ruta | Page | Rol |
+|---|---|---|
+| `/auth` | LoginPage | Todos |
+| `/check` | MobileIncidentReportPage | Operador |
+| `/tec-queue` | TechnicianQueuePage | Técnico |
+| `/supervisor` | SupervisorDashboardPage | Supervisor |
+| `/ui` | UIPage | Design system |
+
+La redirección por rol ocurre automáticamente al hacer login según el campo `role` que devuelve el backend.
 
 ---
 
-## ✅ Permitido
-- UI pura en components
+## 🧱 Atomic Design
+
+### Atoms
+Wrappers mínimos sobre shadcn/ui. Siguen la convención `App<Nombre>`. No tienen lógica, solo extienden props y añaden lo específico del proyecto (ej: `errorMessage` en `AppInput`).
+
+### Molecules
+Combinaciones de atoms organizadas **por dominio** (`auth/`, `incidents/`, `supervisor/`). Tienen lógica de UI ligera pero son agnósticas al backend — reciben todo por props.
+
+### Organisms
+Bloques funcionales completos. Pueden contener formularios con validación (React Hook Form + Yup). Sus schemas viven en `organisms/schemas/`. Son agnósticos a la page — solo emiten callbacks.
+
+### Pages
+Único lugar con lógica de negocio. Consumen hooks, manejan estado, orquestan el flujo y pasan datos a los organismos. Los stubs de API están marcados con `// ─── WIP API` para reemplazar fácilmente.
+
+---
+
+## 🔐 Autenticación
+
+- Login → `POST /api/auth/login` → devuelve `AuthUser` + cookies `httpOnly`
+- 2FA → hardcodeado `999999` (endpoint pendiente)
+- Refresh → interceptor automático en `api.ts` cuando recibe `401`
+- Logout → `POST /api/auth/logout` + limpieza de store + redirect `/auth`
+- Estado del usuario en `useAuthStore` (Zustand)
+
+```
+signIn() → setPendingUser() → setStep('2fa')
+verify2fa() → setUser(store) → navigate(getRoleRedirect(role))
+```
+
+---
+
+## 🌐 Manejo de errores HTTP
+
+Centralizado en `lib/getErrorMessage.ts`. Mapea status codes a mensajes amigables en español. Si el backend devuelve `message` en el body, lo usa. Si no, cae al mapa de status codes.
+
+```
+403 → "Usuario o contraseña incorrectos"
+401 → "No autorizado, inicia sesión nuevamente"
+500 → "Error en el servidor, intenta más tarde"
+```
+
+---
+
+## ⚡ Server State
+
+TanStack Query para todos los GETs. Patrón estándar:
+
+```ts
+// service
+export async function fetchAreas(): Promise<AreaDTO[]> {
+  const { data } = await api.get('/api/areas');
+  return data;
+}
+
+// hook
+export function useAreas() {
+  const { data = [], isLoading, isError } = useQuery({
+    queryKey: ['areas'],
+    queryFn: fetchAreas,
+    retry: 1,
+  });
+  return { options: data.map(...), isLoading, isError };
+}
+
+// page
+const { options, isLoading, isError } = useAreas();
+```
+
+Los selects tienen fallback estático cuando el backend no responde — la UI nunca explota.
+
+---
+
+## 🧠 Reglas de arquitectura
+
+### ❌ Prohibido
+- Llamar APIs dentro de components o atoms
+- Zustand para server state
+- Lógica de negocio fuera de pages
+- `any` — usar `axios.isAxiosError()` y tipos del dominio
+
+### ✅ Permitido
+- UI pura en atoms/molecules/organisms
 - Data fetching solo en hooks/pages
-- Zustand solo para estado de UI
+- Zustand solo para estado de UI (auth, modales)
 - Services aislados sin React
 
 ---
 
-# 🚀 Objetivo de la arquitectura
+## 🔄 Flujo de datos
 
-Esta estructura busca:
-
-- Escalabilidad sin deuda técnica
-- Reutilización de componentes
-- Separación clara de responsabilidades
-- Facilidad para testing
-- Mantenimiento a largo plazo
+```
+Backend API
+    ↓
+services/ (Axios + interceptor)
+    ↓
+hooks/ (TanStack Query)
+    ↓
+Pages (lógica + composición)
+    ↓
+Organisms (bloques funcionales)
+    ↓
+Molecules (por dominio)
+    ↓
+Atoms (App* wrappers)
+```
 
 ---
 
-# 🧬 Resultado final
+## 🚀 Levantar en local
 
-Una arquitectura donde:
+```bash
+# Instalar dependencias
+npm install
 
-- UI es totalmente reutilizable
-- Lógica de negocio está aislada
-- El backend no contamina componentes
-- El sistema puede crecer sin refactors agresivos
+# Variables de entorno
+cp .env.example .env
+# Editar VITE_API_URL si el back no corre en localhost:9090
+
+# Levantar el backend (requiere Docker)
+docker compose pull
+docker compose up -d
+
+# Correr el frontend
+npm run dev
+```
+
+---
+
+*Desarrollo forntEnd @fhdzleon* |
+*OpsCore 2026 — NoCountry Project · Team 21*

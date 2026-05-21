@@ -1,7 +1,14 @@
+import { useState } from "react";
 import {
   IncidentReportForm,
   type IncidentReportData,
 } from "@/components/organisms/incidents/IncidentReportForm";
+import { IncidentConfirmationDialog } from "@/components/organisms/incidents/IncidentConfirmationDialog";
+import type { IncidentConfirmationData } from "@/components/organisms/types";
+import { BasePageContainer } from "@/components/organisms/BasePageContainer";
+import { INCIDENT_TYPES } from "@/constants";
+import { useAreas, useEstaciones } from "@/hooks/useInfo";
+import { TriangleAlert } from "lucide-react";
 
 // ─── Catálogos estáticos — reemplazar con llamadas a API ─────────────────────
 
@@ -19,45 +26,90 @@ const AREAS = [
   { value: "maintenance", label: "Mantenimiento" },
 ];
 
-const INCIDENT_TYPES = [
-  { value: "failure", label: "Falla" },
-  { value: "accident", label: "Accidente" },
-  { value: "near_miss", label: "Casi accidente" },
-  { value: "quality", label: "Calidad" },
-  { value: "maintenance", label: "Mantenimiento preventivo" },
-];
+// ─── WIP API ──────────────────────
 
-// ─── Service stub — reemplazar con tu capa de servicios ──────────────────────
-
-async function submitIncident(data: IncidentReportData): Promise<void> {
+async function submitIncident(
+  data: IncidentReportData,
+): Promise<IncidentConfirmationData> {
   await new Promise((r) => setTimeout(r, 1000));
-  console.log("Incidente enviado:", data);
+  // Aquí irá el POST + conexión a websocket
+  return {
+    incidentId: "201",
+    status: "ABIERTO",
+    supervisorNotified:
+      (data.safetyChecklist as Record<string, boolean>)[
+        "supervisor_notified"
+      ] ?? false,
+  };
 }
 
-// ─── Page ────────────────────────────────────────────────────────────────────
+// ───────────────────────────────────────────────────────────────────────
 
 export function MobileIncidentReportPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [confirmation, setConfirmation] =
+    useState<IncidentConfirmationData | null>(null);
+  const [formKey, setFormKey] = useState(0);
+  const [selectedArea, setSelectedArea] = useState("");
+
+  const { options: areaOptions, isLoading: areasLoading } = useAreas();
+
+  const {
+    options: estacionOptions,
+    isLoading: estacionesLoading,
+    isError: estacionesError,
+  } = useEstaciones(selectedArea);
   const handleSubmit = async (data: IncidentReportData) => {
-    await submitIncident(data);
-    // router.push("/incidents/confirmation")
+    setIsLoading(true);
+    try {
+      const result = await submitIncident(data);
+      setConfirmation(result);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setConfirmation(null);
+    setFormKey((k) => k + 1);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-4">
-        <h1 className="text-lg font-semibold">Reportar Incidente</h1>
-      </div>
+    <BasePageContainer title="Reportar Incidente">
+      <div className="bg-background">
+        <div className="px-4 py-6 max-w-lg mx-auto flex flex-col gap-6">
+          <div className="flex gap-3 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3">
+            <TriangleAlert
+              size={16}
+              className="text-amber-500 shrink-0 mt-0.5"
+            />
+            <p className="text-sm text-amber-800">
+              Completa todos los campos con precisión. La información que
+              ingreses será asignada al técnico responsable de atender el
+              incidente.
+            </p>
+          </div>
+          <IncidentReportForm
+            key={formKey}
+            areas={areaOptions.length > 0 ? areaOptions : AREAS}
+            machines={
+              estacionesError || estacionOptions.length === 0
+                ? MACHINES
+                : estacionOptions
+            }
+            incidentTypes={INCIDENT_TYPES}
+            onSubmit={handleSubmit}
+            onAreaChange={setSelectedArea}
+            isLoading={isLoading || areasLoading || estacionesLoading}
+          />
+        </div>
 
-      {/* Form */}
-      <div className="px-4 py-6 max-w-lg mx-auto">
-        <IncidentReportForm
-          machines={MACHINES}
-          areas={AREAS}
-          incidentTypes={INCIDENT_TYPES}
-          onSubmit={handleSubmit}
+        <IncidentConfirmationDialog
+          open={!!confirmation}
+          data={confirmation}
+          onClose={handleClose}
         />
       </div>
-    </div>
+    </BasePageContainer>
   );
 }

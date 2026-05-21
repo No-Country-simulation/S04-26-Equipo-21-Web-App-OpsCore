@@ -1,55 +1,36 @@
 import { useState } from "react";
-import {
-  LoginForm,
-  type LoginCredentials,
-} from "@/components/organisms/auth/LoginForm";
-import {
-  TwoFactorForm,
-  type TwoFactorPayload,
-} from "@/components/organisms/auth/TwoFactorForm";
+import { useNavigate } from "react-router-dom";
+import { LoginForm } from "@/components/organisms/auth/LoginForm";
+import { TwoFactorForm } from "@/components/organisms/auth/TwoFactorForm";
+import { useAuthStore } from "@/store/Authstore";
+import { getRoleRedirect } from "@/lib/authRedirect";
+import { getErrorMessage } from "@/lib/getErrorMessage";
+import type { AuthUser } from "@/store/Authstore";
+import type {
+  LoginCredentials,
+  TwoFactorPayload,
+} from "@/components/organisms/types";
+import type { Step } from "@/types";
+import { signIn, verify2fa } from "@/services/auth.services";
 
-// ─── Step machine ────────────────────────────────────────────────────────────
-type Step = "login" | "2fa";
-
-// ─── Service stubs — swap for your real API layer ────────────────────────────
-async function signIn(
-  credentials: LoginCredentials,
-): Promise<{ requires2fa: boolean }> {
-  await new Promise((r) => setTimeout(r, 800));
-  return { requires2fa: credentials.role === "technician" };
-}
-
-async function verify2fa(payload: TwoFactorPayload): Promise<void> {
-  await new Promise((r) => setTimeout(r, 800));
-  if (payload.code !== "123456")
-    throw new Error("Codigo 2FA inválido. intenta otra vez.");
-}
-
-// ─── Page ────────────────────────────────────────────────────────────────────
 export function LoginPage() {
+  const navigate = useNavigate();
+  const setUser = useAuthStore((s) => s.setUser);
+
   const [step, setStep] = useState<Step>("login");
   const [isLoading, setIsLoading] = useState(false);
   const [pageError, setPageError] = useState<string | undefined>();
-  const [pendingCredentials, setPendingCredentials] =
-    useState<LoginCredentials | null>(null);
+  const [pendingUser, setPendingUser] = useState<AuthUser | null>(null);
 
   const handleLogin = async (credentials: LoginCredentials) => {
     setIsLoading(true);
     setPageError(undefined);
     try {
-      const { requires2fa } = await signIn(credentials);
-      setPendingCredentials(credentials);
-      if (requires2fa) {
-        setStep("2fa");
-      } else {
-        redirectToDashboard(credentials.role);
-      }
+      const user = await signIn(credentials);
+      setPendingUser(user);
+      setStep("2fa");
     } catch (err) {
-      setPageError(
-        err instanceof Error
-          ? err.message
-          : "Ingreso fallido. intenta otra vez.",
-      );
+      setPageError(getErrorMessage(err, "Ingreso fallido. Intenta otra vez."));
     } finally {
       setIsLoading(false);
     }
@@ -60,14 +41,15 @@ export function LoginPage() {
     setPageError(undefined);
     try {
       await verify2fa(payload);
-      redirectToDashboard(pendingCredentials?.role ?? "technician");
+
+      if (pendingUser) {
+        setUser(pendingUser);
+        navigate(getRoleRedirect(pendingUser.role));
+      }
     } catch (err) {
       setPageError(
-        err instanceof Error
-          ? err.message
-          : "Verificación fallida. intenta otra vez.",
+        getErrorMessage(err, "Verificación fallida. Intenta otra vez."),
       );
-      setIsLoading(false);
     }
   };
 
@@ -76,15 +58,9 @@ export function LoginPage() {
     setPageError(undefined);
   };
 
-  const redirectToDashboard = (role: string) => {
-    // e.g. router.push(`/dashboard/${role}`)
-    console.log(`Redirecting ${role} to dashboard`);
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
-        {/* Brand */}
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">OpsCore</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -94,9 +70,7 @@ export function LoginPage() {
           </p>
         </div>
 
-        {/* Card */}
         <div className="rounded-xl border bg-card p-6 shadow-sm">
-          {/* Page-level error (API errors, not field validation) */}
           {pageError && (
             <div
               role="alert"
@@ -119,7 +93,6 @@ export function LoginPage() {
           )}
         </div>
 
-        {/* Footer */}
         <p className="text-center text-xs text-muted-foreground mt-6">
           OpsCore · Incident Operations Platform
         </p>

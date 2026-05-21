@@ -3,11 +3,16 @@ package com.opscore.incident.controller;
 
 import com.opscore.incident.service.IncidenteService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/incidentes")
+@RequestMapping("/api/incidentes")
+@Tag(
+        name = "Catálogos de incidentes",
+        description = "Endpoints auxiliares para obtener tipos de incidentes y niveles de prioridad utilizados en el registro de incidentes operativos"
+)
 public class IncidenteController {
 
     private final IncidenteService incidenteService;

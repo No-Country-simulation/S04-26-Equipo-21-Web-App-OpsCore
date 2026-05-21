@@ -1,22 +1,36 @@
 package com.opscore.incident.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "respuestas_puntos_control")
+@Table(
+        name = "respuestas_puntos_control",
+        indexes = {
+                @Index(name = "idx_respuestas_ejecucion_id", columnList = "ejecucion_id"),
+                @Index(name = "idx_respuestas_item_id", columnList = "item_id")
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uq_respuesta_ejecucion_item",
+                        columnNames = {"ejecucion_id", "item_id"}
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class RespuestaPuntoControl extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private boolean completado;
+
+    @Column(columnDefinition = "TEXT")
     private String observaciones;
 
 }

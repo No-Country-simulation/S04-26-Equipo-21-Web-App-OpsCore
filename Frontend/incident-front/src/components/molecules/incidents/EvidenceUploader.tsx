@@ -1,27 +1,41 @@
-import { AppButton } from "@/components/atoms";
-import { AppBadge } from "@/components/atoms";
-import { AppLabel } from "@/components/atoms";
-import { AppText } from "@/components/atoms";
+import { AppLabel, AppBadge, AppButton } from "@/components/atoms";
+import { Camera, Video } from "lucide-react";
+import { type ReactNode } from "react";
 
-export function EvidenceUploader() {
+type EvidenceUploaderProps = {
+  icon?: ReactNode;
+};
+
+export function EvidenceUploader({ icon }: EvidenceUploaderProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center gap-2">
-        <AppLabel>Evidencia</AppLabel>
-        <AppBadge variant="secondary" label="Proximamente" />
+        <AppLabel>
+          {icon}
+          Evidencia
+        </AppLabel>
+        <AppBadge label="Próximamente" variant="destructive" />
       </div>
 
-      <AppButton
-        variant="outline"
-        className="w-full h-20 border-dashed flex flex-col gap-1"
-        disabled
-        label=""
-      >
-        <span className="text-xl">📷</span>
-        <AppText className="text-xs text-muted-foreground">
-          Capturar / Subir foto
-        </AppText>
-      </AppButton>
+      <div className="flex gap-2">
+        <AppButton
+          variant="outline"
+          className="flex-1 h-16 border-dashed flex flex-col gap-1 opacity-50 cursor-not-allowed"
+          disabled
+        >
+          <Camera size={18} />
+          <span className="text-xs">Subir Imagen</span>
+        </AppButton>
+
+        <AppButton
+          variant="outline"
+          className="flex-1 h-16 border-dashed flex flex-col gap-1 opacity-50 cursor-not-allowed"
+          disabled
+        >
+          <Video size={18} />
+          <span className="text-xs">Subir Video</span>
+        </AppButton>
+      </div>
     </div>
   );
 }

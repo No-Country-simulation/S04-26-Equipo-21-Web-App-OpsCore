@@ -1,12 +1,12 @@
-import { AppLabel } from "@/components/atoms";
-import { AppText } from "@/components/atoms";
-
-export type Severity = "low" | "medium" | "critical";
+import { type ReactNode } from "react";
+import { AppLabel, AppText } from "@/components/atoms";
+import type { Severity } from "@/components/molecules/types";
 
 const OPTIONS: { value: Severity; label: string }[] = [
-  { value: "low", label: "Baja" },
-  { value: "medium", label: "Media" },
-  { value: "critical", label: "Crítica" },
+  { value: "BAJA", label: "Baja" },
+  { value: "NORMAL", label: "Media" },
+  { value: "ALTA", label: "Alta" },
+  { value: "CRITICA", label: "Crítica" },
 ];
 
 type SeveritySelectorProps = {
@@ -14,6 +14,7 @@ type SeveritySelectorProps = {
   onChange: (value: Severity) => void;
   errorMessage?: string;
   disabled?: boolean;
+  icon?: ReactNode;
 };
 
 export function SeveritySelector({
@@ -21,10 +22,14 @@ export function SeveritySelector({
   onChange,
   errorMessage,
   disabled,
+  icon,
 }: SeveritySelectorProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <AppLabel>Severidad</AppLabel>
+      <AppLabel>
+        {icon}
+        Severidad
+      </AppLabel>
 
       <div className="flex gap-4" role="radiogroup" aria-label="Severidad">
         {OPTIONS.map((opt) => (
