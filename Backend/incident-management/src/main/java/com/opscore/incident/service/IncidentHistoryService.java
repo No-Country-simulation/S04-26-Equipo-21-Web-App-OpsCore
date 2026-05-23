@@ -1,5 +1,6 @@
 package com.opscore.incident.service;
 
+import com.opscore.incident.enums.EstadoOperativo;
 import com.opscore.incident.model.IncidentHistory;
 import com.opscore.incident.model.Incidente;
 import com.opscore.incident.repository.IncidentHistoryRepository;
@@ -21,8 +22,8 @@ public class IncidentHistoryService {
             String descripcion,
             Long usuarioId,
             String rol,
-            EstadoIncidente oldState,
-            EstadoIncidente newState
+            EstadoOperativo oldState,
+            EstadoOperativo newState
     ) {
 
         IncidentHistory history = IncidentHistory.builder()
