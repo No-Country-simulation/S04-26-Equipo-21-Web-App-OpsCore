@@ -2,8 +2,8 @@ package com.opscore.incident.service;
 
 import com.opscore.incident.dto.ResolucionRequestDTO;
 import com.opscore.incident.dto.ResolucionResponseDTO;
+import com.opscore.incident.enums.EstadoOperativo;
 import com.opscore.incident.model.*;
-import com.opscore.incident.enums.EstadoIncidente;
 import com.opscore.incident.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,37 +19,64 @@ public class ResolucionService {
     private final IncidenteRepository incidenteRepository;
     private final UsuarioRepository usuarioRepository;
 
+
+    // INICIAR TRABAJO
     @Transactional
-    public ResolucionResponseDTO finalizarReparacion(ResolucionRequestDTO dto) {
-        // 1. Validar existencia del incidente
-        Incidente incidente = incidenteRepository.findById(dto.getIncidenteId())
-                .orElseThrow(() -> new RuntimeException("Incidente no encontrado con ID: " + dto.getIncidenteId()));
+    public void iniciarTrabajo(Long incidenteId, Long tecnicoId) {
 
-        // 2. Cambiar estado del incidente
-        incidente.setEstado(EstadoIncidente.RESUELTO);
+        Incidente incidente = incidenteRepository.findById(incidenteId)
+                .orElseThrow(() -> new RuntimeException("Incidente no encontrado"));
 
-        // 3. Liberar al técnico asignado
-        Usuario tecnico = incidente.getTecnico();
-        if (tecnico != null) {
-            tecnico.setDisponible(true);
-            usuarioRepository.save(tecnico);
+        if (incidente.getTecnico() == null ||
+                !incidente.getTecnico().getId().equals(tecnicoId)) {
+            throw new RuntimeException("Técnico no autorizado");
         }
 
-        // 4. Crear y guardar la entidad Resolucion
-        Resolucion nuevaResolucion = Resolucion.builder()
+        incidente.setEstadoOperativo(EstadoOperativo.EN_PROCESO);
+        incidente.setFechaInicioTrabajo(LocalDateTime.now());
+
+        incidenteRepository.save(incidente);
+    }
+
+    // RESOLVER INCIDENTE
+    @Transactional
+    public ResolucionResponseDTO resolverIncidente(ResolucionRequestDTO dto) {
+
+        Incidente incidente = incidenteRepository.findById(dto.getIncidenteId())
+                .orElseThrow(() -> new RuntimeException("Incidente no encontrado"));
+
+        // Validar técnico asignado
+        Usuario tecnico = incidente.getTecnico();
+
+        if (tecnico == null) {
+            throw new RuntimeException("Incidente sin técnico asignado");
+        }
+
+        // Cambiar estado operativo
+        incidente.setEstadoOperativo(EstadoOperativo.RESUELTO);
+        incidente.setFechaResolucion(LocalDateTime.now());
+
+        // Crear resolución
+        Resolucion resolucion = Resolucion.builder()
                 .incidente(incidente)
+                .tecnico(tecnico)
                 .descripcionSolucion(dto.getDescripcionSolucion())
+                .createdAt(LocalDateTime.now())
                 .build();
 
-        Resolucion guardada = resolucionRepository.save(nuevaResolucion);
+        Resolucion guardada = resolucionRepository.save(resolucion);
+
+        // liberar técnico
+        tecnico.setDisponible(true);
+
+        usuarioRepository.save(tecnico);
         incidenteRepository.save(incidente);
 
-        // 5. Retornar el DTO de respuesta
         return ResolucionResponseDTO.builder()
                 .id(guardada.getId())
                 .incidenteId(incidente.getId())
-                .comentario(guardada.getDescripcionSolucion())
-                .fechaResolucion(LocalDateTime.now()) // O usar la de BaseEntity si aplica
+                .descripcionSolucion(guardada.getDescripcionSolucion())
+                .fechaResolucion(incidente.getFechaResolucion())
                 .build();
     }
 }

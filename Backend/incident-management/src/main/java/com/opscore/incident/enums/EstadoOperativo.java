@@ -1,9 +1,11 @@
 package com.opscore.incident.enums;
 
-public enum EstadoIncidente {
+public enum EstadoOperativo {
     ABIERTO,
     ASIGNADO,
     EN_PROCESO,
     RESUELTO,
+    VALIDADO,
     CERRADO
 }
+

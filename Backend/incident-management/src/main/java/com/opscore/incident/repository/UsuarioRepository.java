@@ -21,6 +21,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             "AND u.disponible = true")
     List<Usuario> findTecnicoAsignable(@Param("areaId") Long areaId,
                                        @Param("especialidadId") Long especialidadId);
-
-    Optional<Usuario> findByUsername(String username);
 }

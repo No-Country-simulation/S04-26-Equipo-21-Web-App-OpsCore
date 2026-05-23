@@ -28,17 +28,9 @@ public class RespuestaPuntoControl extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ejecucion_id", nullable = false)
-    private ChecklistEjecucion ejecucion;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "item_id", nullable = false)
-    private ChecklistItem item;
-
-    @Column(nullable = false)
     private boolean completado;
 
     @Column(columnDefinition = "TEXT")
     private String observaciones;
+
 }

@@ -1,85 +1,60 @@
 package com.opscore.incident.model;
 
-import com.opscore.incident.enums.EstadoIncidente;
-import com.opscore.incident.enums.Prioridad;
-import com.opscore.incident.enums.TipoIncidente;
+import com.opscore.incident.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(
-        name = "incidentes",
-        indexes = {
-                @Index(name = "idx_incidentes_area_id", columnList = "area_id"),
-                @Index(name = "idx_incidentes_estacion_id", columnList = "estacion_id"),
-                @Index(name = "idx_incidentes_reportado_por_id", columnList = "reportado_por_id"),
-                @Index(name = "idx_incidentes_tecnico_asignado_id", columnList = "tecnico_asignado_id"),
-                @Index(name = "idx_incidentes_estado", columnList = "estado"),
-                @Index(name = "idx_incidentes_prioridad", columnList = "prioridad"),
-                @Index(name = "idx_incidentes_created_at", columnList = "created_at")
-        }
-)
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "incidentes")
+@Getter @Setter @Builder
+@NoArgsConstructor @AllArgsConstructor
 public class Incidente extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    // 👇 IMPORTANTE: título humano legible
     private String titulo;
 
-    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(
-            name = "tipo",
-            nullable = false,
-            columnDefinition = "incidente_tipo"
-    )
-    private TipoIncidente tipo;
-
-    @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(nullable = false, columnDefinition = "incidente_estado")
-    private EstadoIncidente estado;
-
-    @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(nullable = false, columnDefinition = "incidente_prioridad")
     private Prioridad prioridad;
 
-    @Column(name = "solucion_tecnica", columnDefinition = "TEXT")
-    private String solucionTecnica;
+    @Enumerated(EnumType.STRING)
+    private TipoFalla tipoFalla;
 
-    @Column(name = "fecha_cierre")
-    private LocalDateTime fechaCierre;
+    @Enumerated(EnumType.STRING)
+    private EstadoOperativo estadoOperativo;
 
-    // --- RELACIONES ---
+    @Enumerated(EnumType.STRING)
+    private EstadoValidacion estadoValidacion;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "area_id", nullable = false)
+    // RELACIONES
+    @ManyToOne
     private Area area;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "estacion_id", nullable = false)
+    @ManyToOne
     private EstacionTrabajo estacion;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "reportado_por_id", nullable = false)
+    @ManyToOne
     private Usuario operador;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tecnico_asignado_id", nullable = false)
+    @ManyToOne
     private Usuario tecnico;
+
+    // TIMELINE REAL
+    private LocalDateTime fechaAsignacion;
+    private LocalDateTime fechaInicioTrabajo;
+    private LocalDateTime fechaResolucion;
+    private LocalDateTime fechaCierre;
+
+    @OneToMany(mappedBy = "incidente", cascade = CascadeType.ALL)
+    private List<IncidentHistory> historial;
 }

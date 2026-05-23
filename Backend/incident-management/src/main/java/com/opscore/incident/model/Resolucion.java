@@ -24,20 +24,13 @@ public class Resolucion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "incidente_id", nullable = false, unique = true)
+    @ManyToOne
     private Incidente incidente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "responsable_id")
-    private Usuario responsable;
-
-    @Column(name = "descripcion_solucion", columnDefinition = "TEXT", nullable = false)
     private String descripcionSolucion;
 
-    private LocalDateTime fechaAsignacion;
+    @ManyToOne
+    private Usuario tecnico;
 
-    private LocalDateTime fechaCierre;
-
-    private Long tiempoResolucion;
+    private LocalDateTime createdAt;
 }

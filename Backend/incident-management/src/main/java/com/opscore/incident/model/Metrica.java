@@ -31,5 +31,5 @@ public class Metrica {
     private Integer incidentesCriticos;
 
     @Column(columnDefinition = "TEXT")
-    private String patronesRecurrentes;
+    private String patronesRecurrentes; // texto o JSON
 }
