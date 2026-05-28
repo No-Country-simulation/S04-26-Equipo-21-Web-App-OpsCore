@@ -1,25 +1,28 @@
 package com.opscore.incident.controller;
-import com.opscore.incident.model.Resolucion;
+
+import com.opscore.incident.dto.ResolucionRequestDTO;
+import com.opscore.incident.dto.ResolucionResponseDTO;
 import com.opscore.incident.service.ResolucionService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("/resoluciones")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ResolucionController {
 
     private final ResolucionService resolucionService;
 
-//recomendado
-   // @PostMapping("/asignar")
-   // public Resolucion asignarResponsable(@RequestParam Long incidenteId, @RequestParam Long usuarioId) {
-   //     return resolucionService.asignarResponsable(incidenteId, usuarioId);
-   // }
-//
-   // @PutMapping("/{id}/cerrar")
-   // public Resolucion cerrarIncidente(@PathVariable Long id, @RequestParam String descripcionSolucion) {
-   //     return resolucionService.cerrarIncidente(id, descripcionSolucion);
-   // }
-}
+    // TÉCNICO INICIA TRABAJO EN PISO (Para calcular el MTTR exacto)
+    @PostMapping("/iniciar")
+    public void iniciarTrabajo(@RequestParam Long incidenteId, @RequestParam Long tecnicoId) {
+        resolucionService.iniciarTrabajo(incidenteId, tecnicoId);
+    }
 
+    // TÉCNICO FINALIZA Y CIERRA DESDE POSTMAN/APP
+    @PostMapping("/resolver")
+    public ResolucionResponseDTO resolverIncidente(@RequestBody ResolucionRequestDTO request) {
+        return resolucionService.resolverIncidente(request);
+    }
+}

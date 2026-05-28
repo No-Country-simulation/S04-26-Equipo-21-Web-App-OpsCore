@@ -4,19 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(
-        name = "respuestas_puntos_control",
-        indexes = {
-                @Index(name = "idx_respuestas_ejecucion_id", columnList = "ejecucion_id"),
-                @Index(name = "idx_respuestas_item_id", columnList = "item_id")
-        },
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uq_respuesta_ejecucion_item",
-                        columnNames = {"ejecucion_id", "item_id"}
-                )
-        }
-)
+@Table(name = "respuestas_puntos_control")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,5 +20,4 @@ public class RespuestaPuntoControl extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String observaciones;
-
 }

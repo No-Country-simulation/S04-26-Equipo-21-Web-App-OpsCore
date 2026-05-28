@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
         name = "resoluciones",
         indexes = {
                 @Index(name = "idx_resoluciones_incidente_id", columnList = "incidente_id"),
-                @Index(name = "idx_resoluciones_responsable_id", columnList = "responsable_id")
+                @Index(name = "idx_resoluciones_tecnico_id", columnList = "tecnico_id") // 👈 CORREGIDO AQUÍ
         }
 )
 @Getter
@@ -30,7 +30,7 @@ public class Resolucion {
     private String descripcionSolucion;
 
     @ManyToOne
-    private Usuario tecnico;
+    private Usuario tecnico; // 👈 Al llamarse 'tecnico', la columna en la BD es 'tecnico_id'
 
     private LocalDateTime createdAt;
 }

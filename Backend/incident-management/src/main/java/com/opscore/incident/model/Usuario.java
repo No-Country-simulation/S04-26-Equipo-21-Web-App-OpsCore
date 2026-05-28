@@ -45,8 +45,7 @@ public class Usuario extends BaseEntity implements UserDetails {
     private String numeroReloj;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(columnDefinition = "usuario_rol")
+    @Column(name = "rol", length = 30, nullable = false)
     private Rol rol;
 
     @Column(nullable = false)

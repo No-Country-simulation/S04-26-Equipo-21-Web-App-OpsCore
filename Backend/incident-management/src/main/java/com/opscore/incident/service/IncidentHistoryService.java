@@ -1,10 +1,10 @@
 package com.opscore.incident.service;
 
 import com.opscore.incident.enums.EstadoOperativo;
+import com.opscore.incident.enums.EventType;
 import com.opscore.incident.model.IncidentHistory;
 import com.opscore.incident.model.Incidente;
 import com.opscore.incident.repository.IncidentHistoryRepository;
-import jdk.jfr.EventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

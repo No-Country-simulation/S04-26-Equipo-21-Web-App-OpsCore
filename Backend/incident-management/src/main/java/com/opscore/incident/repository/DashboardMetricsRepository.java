@@ -1,17 +1,16 @@
 package com.opscore.incident.repository;
 
-import com.opscore.incident.enums.EstadoOperativo;
 import com.opscore.incident.model.Incidente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface DashboardMetricsRepository extends JpaRepository<Incidente, Long> {
 
-    // =========================
-    // KPI POR ESTADO
-    // =========================
+    // 1. KPI POR ESTADO (JPQL Estándar)
     @Query("""
         SELECT i.estadoOperativo, COUNT(i)
         FROM Incidente i
@@ -19,34 +18,40 @@ public interface DashboardMetricsRepository extends JpaRepository<Incidente, Lon
     """)
     List<Object[]> countByEstado();
 
-    // =========================
-    // MTTR
-    // =========================
-    @Query("""
-        SELECT COALESCE(AVG(
-            EXTRACT(EPOCH FROM (i.fechaResolucion - i.fechaInicioTrabajo))/60
-        ), 0)
-        FROM Incidente i
-        WHERE i.fechaResolucion IS NOT NULL
-        AND i.fechaInicioTrabajo IS NOT NULL
-    """)
+    // 2. MTTR (SQL Nativo de PostgreSQL)
+    @Query(value = """
+        SELECT COALESCE(
+            AVG(EXTRACT(EPOCH FROM (fecha_resolucion - fecha_inicio_trabajo)) / 60), 
+            0.0
+        )
+        FROM incidentes
+        WHERE fecha_resolucion IS NOT NULL
+          AND fecha_inicio_trabajo IS NOT NULL
+    """, nativeQuery = true)
     Double calcularMTTR();
 
-    // =========================
-    // MTTA
-    // =========================
-    @Query("""
-        SELECT COALESCE(AVG(
-            EXTRACT(EPOCH FROM (i.fechaAsignacion - i.fechaCreacion))/60
-        ), 0)
-        FROM Incidente i
-        WHERE i.fechaAsignacion IS NOT NULL
-    """)
+    // 3. MTTA (SQL Nativo de PostgreSQL)
+    @Query(value = """
+        SELECT COALESCE(
+            AVG(EXTRACT(EPOCH FROM (fecha_asignacion - created_at)) / 60), 
+            0.0
+        )
+        FROM incidentes
+        WHERE fecha_asignacion IS NOT NULL
+    """, nativeQuery = true)
     Double calcularMTTA();
 
-    // =========================
-    // INCIDENTES POR AREA
-    // =========================
+    // 4. SLA CRÍTICOS (SQL Nativo de PostgreSQL)
+    @Query(value = """
+        SELECT COUNT(*)
+        FROM incidentes
+        WHERE prioridad = 'CRITICO'
+          AND fecha_resolucion IS NOT NULL
+          AND (EXTRACT(EPOCH FROM (fecha_resolucion - created_at)) / 60) > 30
+    """, nativeQuery = true)
+    Long incidentesCriticosFueraSla();
+
+    // 5. INCIDENTES POR ÁREA (JPQL Estándar)
     @Query("""
         SELECT a.nombre, COUNT(i)
         FROM Incidente i
@@ -55,9 +60,7 @@ public interface DashboardMetricsRepository extends JpaRepository<Incidente, Lon
     """)
     List<Object[]> incidentesPorArea();
 
-    // =========================
-    // TOP MAQUINAS
-    // =========================
+    // 6. TOP MÁQUINAS CON FALLAS (JPQL Estándar)
     @Query("""
         SELECT e.nombre, COUNT(i)
         FROM Incidente i
@@ -65,16 +68,4 @@ public interface DashboardMetricsRepository extends JpaRepository<Incidente, Lon
         GROUP BY e.nombre
     """)
     List<Object[]> topMaquinasConFallas();
-
-    // =========================
-    // SLA CRITICOS
-    // =========================
-    @Query("""
-        SELECT COUNT(i)
-        FROM Incidente i
-        WHERE i.prioridad = com.opscore.incident.enums.Prioridad.CRITICO
-        AND i.fechaResolucion IS NOT NULL
-        AND EXTRACT(EPOCH FROM (i.fechaResolucion - i.fechaCreacion))/60 > 30
-    """)
-    Long incidentesCriticosFueraSla();
 }
