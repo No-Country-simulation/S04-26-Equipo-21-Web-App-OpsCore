@@ -1,11 +1,17 @@
 package com.opscore.incident.service;
 
+<<<<<<< HEAD
 import com.opscore.incident.dto.IncidenteRequestDTO; // 👈 Cambiado al DTO del Front
 import com.opscore.incident.dto.IncidenteResponseDTO;
 import com.opscore.incident.enums.EstadoOperativo;
 import com.opscore.incident.enums.EstadoValidacion;
 import com.opscore.incident.enums.EventType;
 import com.opscore.incident.enums.Prioridad;
+=======
+import com.opscore.incident.dto.IncidenteReportRequestDTO;
+import com.opscore.incident.dto.IncidenteResponseDTO;
+import com.opscore.incident.enums.EstadoOperativo;
+>>>>>>> upstream/develop
 import com.opscore.incident.enums.TipoFalla;
 import com.opscore.incident.mapper.IncidenteMapper;
 import com.opscore.incident.model.*;
@@ -26,6 +32,7 @@ public class IncidenteService {
     private final UsuarioRepository usuarioRepository;
     private final EstacionTrabajoRepository estacionRepository;
     private final NotificationService notificationService;
+<<<<<<< HEAD
     private final IncidentHistoryService historyService; // 👈 Añadido para trazabilidad
     private final IncidenteMapper incidenteMapper;
 
@@ -54,10 +61,36 @@ public class IncidenteService {
                 .tipoFalla(tipoFalla)
                 .estadoOperativo(EstadoOperativo.ABIERTO)
                 .estadoValidacion(EstadoValidacion.PENDIENTE)
+=======
+    private final IncidenteMapper incidenteMapper;
+
+    // CREAR INCIDENTE
+    @Transactional
+    public IncidenteResponseDTO crearIncidente(IncidenteReportRequestDTO dto) {
+
+        // 1. Validar estación
+        EstacionTrabajo estacion = estacionRepository.findById(dto.getEstacionId())
+                .orElseThrow(() -> new RuntimeException("Estación no encontrada"));
+
+        Area area = estacion.getArea();
+
+        // 2. Crear título automático (clave para gerencia)
+        String titulo = generarTitulo(area.getNombre(), estacion.getNombre(), dto.getTipoFalla());
+
+        // 3. Construir incidente
+        Incidente incidente = Incidente.builder()
+                .titulo(titulo)
+                .descripcion(dto.getDescripcion())
+                .prioridad(dto.getPrioridad())
+                .tipoFalla(dto.getTipoFalla())
+                .estadoOperativo(EstadoOperativo.ABIERTO)
+                .estadoValidacion(com.opscore.incident.enums.EstadoValidacion.PENDIENTE)
+>>>>>>> upstream/develop
                 .area(area)
                 .estacion(estacion)
                 .build();
 
+<<<<<<< HEAD
         // 5. Guardar incidente inicial
         Incidente guardado = incidenteRepository.save(incidente);
 
@@ -74,12 +107,22 @@ public class IncidenteService {
         notificationService.notificarIncidenteGeneral("NUEVO INCIDENTE: " + titulo);
 
         // 8. Intentar asignación automática por especialidad
+=======
+        // 4. Guardar primero (evita inconsistencias)
+        Incidente guardado = incidenteRepository.save(incidente);
+
+        // 5. Intentar asignación automática
+>>>>>>> upstream/develop
         asignarTecnicoSiDisponible(guardado);
 
         return incidenteMapper.toDTO(guardado);
     }
 
     private Long obtenerEspecialidadPorTipoFalla(TipoFalla tipoFalla) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/develop
         return switch (tipoFalla) {
             case ELECTRICA -> 1L;
             case MECANICA -> 2L;
@@ -88,23 +131,44 @@ public class IncidenteService {
         };
     }
 
+<<<<<<< HEAD
     private void asignarTecnicoSiDisponible(Incidente incidente) {
+=======
+    // ASIGNACIÓN AUTOMÁTICA
+    private void asignarTecnicoSiDisponible(Incidente incidente) {
+
+>>>>>>> upstream/develop
         List<Usuario> tecnicos = usuarioRepository.findTecnicoAsignable(
                 incidente.getArea().getId(),
                 obtenerEspecialidadPorTipoFalla(incidente.getTipoFalla())
         );
 
         if (tecnicos.isEmpty()) {
+<<<<<<< HEAD
             notificationService.notificarIncidenteGeneral("Incidente en cola (sin técnico disponible): " + incidente.getTitulo());
             return;
         }
 
         // Elegir al técnico conectado con menos carga de trabajo activa
+=======
+            // queda en cola implícita
+            notificationService.notificarIncidenteGeneral(
+                    "Incidente sin técnico disponible: " + incidente.getTitulo()
+            );
+            return;
+        }
+
+        // elegir técnico menos cargado
+>>>>>>> upstream/develop
         Usuario tecnico = tecnicos.stream()
                 .min(Comparator.comparing(t -> contarIncidentesActivos(t.getId())))
                 .orElse(tecnicos.get(0));
 
+<<<<<<< HEAD
         // Actualizar asignación
+=======
+        // asignar
+>>>>>>> upstream/develop
         incidente.setTecnico(tecnico);
         incidente.setEstadoOperativo(EstadoOperativo.ASIGNADO);
         incidente.setFechaAsignacion(LocalDateTime.now());
@@ -113,6 +177,7 @@ public class IncidenteService {
         usuarioRepository.save(tecnico);
         incidenteRepository.save(incidente);
 
+<<<<<<< HEAD
         // Registrar asignación en la trazabilidad
         historyService.logEvent(
                 incidente,
@@ -134,6 +199,27 @@ public class IncidenteService {
                 .stream()
                 .filter(i -> i.getEstadoOperativo() != EstadoOperativo.RESUELTO
                         && i.getEstadoOperativo() != EstadoOperativo.CERRADO)
+=======
+        // notificación
+        notificationService.enviarNotificacionAsignacion(
+                tecnico.getNumeroReloj(),
+                "Nuevo incidente asignado: " + incidente.getTitulo()
+        );
+    }
+
+    // UTIL: TÍTULO AUTOMÁTICO
+    private String generarTitulo(String area, String estacion, TipoFalla tipoFalla) {
+        return "Falla " + tipoFalla +
+                " en " + estacion +
+                " - " + area;
+    }
+
+    // UTIL: CARGA TÉCNICO
+    private long contarIncidentesActivos(Long tecnicoId) {
+        return incidenteRepository.findByTecnicoId(tecnicoId)
+                .stream()
+                .filter(i -> i.getEstadoOperativo() != EstadoOperativo.RESUELTO)
+>>>>>>> upstream/develop
                 .count();
     }
 }

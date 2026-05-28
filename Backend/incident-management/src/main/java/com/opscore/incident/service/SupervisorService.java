@@ -120,4 +120,8 @@ public class SupervisorService {
                 "Incidente cerrado: " + incidente.getTitulo()
         );
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/develop

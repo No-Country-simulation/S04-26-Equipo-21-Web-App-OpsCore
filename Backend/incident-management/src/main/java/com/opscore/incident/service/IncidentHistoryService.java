@@ -1,10 +1,17 @@
 package com.opscore.incident.service;
 
+<<<<<<< HEAD
 import com.opscore.incident.enums.EstadoOperativo;
 import com.opscore.incident.enums.EventType;
 import com.opscore.incident.model.IncidentHistory;
 import com.opscore.incident.model.Incidente;
 import com.opscore.incident.repository.IncidentHistoryRepository;
+=======
+import com.opscore.incident.model.IncidentHistory;
+import com.opscore.incident.model.Incidente;
+import com.opscore.incident.repository.IncidentHistoryRepository;
+import jdk.jfr.EventType;
+>>>>>>> upstream/develop
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +29,13 @@ public class IncidentHistoryService {
             String descripcion,
             Long usuarioId,
             String rol,
+<<<<<<< HEAD
             EstadoOperativo oldState,
             EstadoOperativo newState
+=======
+            EstadoIncidente oldState,
+            EstadoIncidente newState
+>>>>>>> upstream/develop
     ) {
 
         IncidentHistory history = IncidentHistory.builder()

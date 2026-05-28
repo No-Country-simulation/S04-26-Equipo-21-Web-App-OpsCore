@@ -34,6 +34,7 @@ public class IncidenteMapper {
                 .id(incidente.getId())
                 .titulo(incidente.getTitulo())
                 .descripcion(incidente.getDescripcion())
+<<<<<<< HEAD
                 .prioridad(incidente.getPrioridad())
                 .tipoFalla(incidente.getTipoFalla())
                 .estadoOperativo(incidente.getEstadoOperativo())
@@ -44,6 +45,12 @@ public class IncidenteMapper {
                 .fechaCreacion(incidente.getCreatedAt()) // Mapeado de BaseEntity
                 .fechaAsignacion(incidente.getFechaAsignacion())
                 .fechaResolucion(incidente.getFechaResolucion())
+=======
+                .estadoOperativo(incidente.getEstadoOperativo())
+                .prioridad(incidente.getPrioridad())
+                .estacion(incidente.getEstacion().getNombre())
+                .tecnico(incidente.getTecnico() != null ? incidente.getTecnico().getNombre() : "No asignado")
+>>>>>>> upstream/develop
                 .build();
     }
 }

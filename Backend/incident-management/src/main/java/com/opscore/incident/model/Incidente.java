@@ -57,4 +57,8 @@ public class Incidente extends BaseEntity {
 
     @OneToMany(mappedBy = "incidente", cascade = CascadeType.ALL)
     private List<IncidentHistory> historial;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/develop

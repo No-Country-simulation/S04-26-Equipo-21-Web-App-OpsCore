@@ -47,4 +47,8 @@ public class IncidentRca {
     private LocalDateTime fechaAnalisis;
 
     private Long analizadoPorSupervisorId;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/develop

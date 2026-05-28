@@ -5,4 +5,8 @@ public interface MaquinaIncidenteDTO {
     String getEstacion();
 
     Long getTotal();
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/develop

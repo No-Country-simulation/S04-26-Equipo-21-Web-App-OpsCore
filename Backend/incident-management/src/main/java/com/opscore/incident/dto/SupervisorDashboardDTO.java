@@ -16,4 +16,8 @@ public class SupervisorDashboardDTO {
     private long tecnicosDisponibles;
 
     private Double mttr;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/develop

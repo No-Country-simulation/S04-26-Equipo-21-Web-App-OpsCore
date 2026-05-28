@@ -30,7 +30,14 @@ public class Resolucion {
     private String descripcionSolucion;
 
     @ManyToOne
+<<<<<<< HEAD
     private Usuario tecnico; // 👈 Al llamarse 'tecnico', la columna en la BD es 'tecnico_id'
 
     private LocalDateTime createdAt;
 }
+=======
+    private Usuario tecnico;
+
+    private LocalDateTime createdAt;
+}
+>>>>>>> upstream/develop

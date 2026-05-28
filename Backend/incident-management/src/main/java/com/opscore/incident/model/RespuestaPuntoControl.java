@@ -20,4 +20,8 @@ public class RespuestaPuntoControl extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String observaciones;
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/develop
 }

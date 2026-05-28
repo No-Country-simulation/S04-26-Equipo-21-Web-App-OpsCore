@@ -56,4 +56,8 @@ public class UsuarioOpsService {
                     usuarioRepository.save(usuario);
                 });
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/develop

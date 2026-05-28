@@ -1,8 +1,13 @@
 package com.opscore.incident.model;
 
 import com.opscore.incident.enums.EstadoOperativo;
+<<<<<<< HEAD
 import com.opscore.incident.enums.EventType;
 import jakarta.persistence.*;
+=======
+import jakarta.persistence.*;
+import jdk.jfr.EventType;
+>>>>>>> upstream/develop
 import lombok.*;
 
 import java.time.LocalDateTime;

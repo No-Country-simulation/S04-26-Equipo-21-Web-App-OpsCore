@@ -41,4 +41,8 @@ public class IncidenteResponseDTO {
     private LocalDateTime fechaAsignacion;
 
     private LocalDateTime fechaResolucion;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/develop
