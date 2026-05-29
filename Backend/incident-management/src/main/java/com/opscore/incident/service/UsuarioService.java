@@ -1,5 +1,6 @@
 package com.opscore.incident.service;
 
+import com.opscore.incident.dto.UsuarioDTO;
 import com.opscore.incident.model.Usuario;
 import com.opscore.incident.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,21 @@ public class UsuarioService {
     public Usuario obtenerPorId(Long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    public List<UsuarioDTO> listar() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(u -> new UsuarioDTO(
+                        u.getId(),
+                        u.getNombre(),
+                        u.getUsername(),
+                        u.getNumeroReloj(),
+                        u.getRol(),
+                        u.isConectado(),
+                        u.isDisponible(),
+                        u.getArea() != null ? u.getArea().getNombre() : null
+                ))
+                .toList();
     }
 }

@@ -1,11 +1,13 @@
 package com.opscore.incident.controller;
 
+import com.opscore.incident.dto.UsuarioDTO;
 import com.opscore.incident.model.Usuario;
 import com.opscore.incident.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@RestController
 @RequestMapping("/usuarios")
 @AllArgsConstructor
 public class UsuarioController {
@@ -28,3 +30,4 @@ public class UsuarioController {
         return usuarioService.listarUsuarios();
     }
 }
+
